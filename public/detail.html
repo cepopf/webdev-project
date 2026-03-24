@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sanrio | Plush HSR Usahana</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="container">
+            <ul class="nav-list">
+                <li class="nav-list__item">
+                    <a href="#" class="nav-list__link">RECOMMEND <i class="bi bi-chevron-down"></i></a>
+                </li>
+                <li class="nav-list__item">
+                    <a href="#" class="nav-list__link">TYPE <i class="bi bi-chevron-down"></i></a>
+                </li>
+                <li class="nav-list__item">
+                    <a href="#" class="nav-list__link">ABOUT US <i class="bi bi-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="site-header">
+        <div class="container text-center position-relative">
+            <button class="menu-trigger" aria-label="Toggle Menu">
+                <i class="bi bi-list"></i>
+            </button>
+            
+            <h1 class="site-header__logo">Sanrio</h1>
+        </div>
+    </header>
+
+    <main class="container product-page mt-5">
+        <div class="row gx-lg-5 align-items-start">
+            
+            <section class="col-md-6 gallery">
+                <div class="gallery__main mb-3">
+                    <button class="gallery__arrow gallery__arrow--left" id="prevBtn" aria-label="Previous Image">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+
+                    <img src="1.jpg" id="mainImage" alt="Product Main" class="gallery__img shadow-sm">
+                    
+                    <button class="gallery__arrow gallery__arrow--right" id="nextBtn" aria-label="Next Image">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="gallery__thumbs">
+                    <img src="1.jpg" class="thumb thumb--active" alt="Front" onclick="setImage(0)">
+                    <img src="2.jpg" class="thumb" alt="Back" onclick="setImage(1)">
+                    <img src="3.jpg" class="thumb" alt="Detail" onclick="setImage(2)">
+                </div>
+            </section>
+
+            <section class="col-md-5 details">
+                <header class="details__header">
+                    <div class="details__title-box">
+                        <h2 class="details__title">Plush HSR Usahana Multi-Color</h2>
+                    </div>
+                    <a href="#" class="details__brand">Sanrio</a>
+                </header>
+
+                <div class="details__price">950.00฿</div>
+
+                <div class="details__quantity">
+                    <span class="qty-label">item</span>
+                    <div class="qty-control">
+                        <button class="qty-control__btn"><i class="bi bi-dash"></i></button>
+                        <span class="qty-control__value">1</span>
+                        <button class="qty-control__btn"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
+
+                <footer class="details__actions">
+                    <button class="btn-action btn-action--cart">
+                        <i class="bi bi-cart3"></i> Add to cart
+                    </button>
+                    <button class="btn-action btn-action--buy">
+                        Buy now
+                    </button>
+                </footer>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Array of your relative image paths
+        const images = [
+            "1.jpg",
+            "2.jpg",
+            "3.jpg"
+        ];
+        
+        let currentIndex = 0;
+        
+        const mainImg = document.getElementById('mainImage');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const thumbs = document.querySelectorAll('.thumb');
+
+        function updateGallery(index) {
+            currentIndex = index;
+            mainImg.src = images[currentIndex];
+            
+            thumbs.forEach(t => t.classList.remove('thumb--active'));
+            thumbs[currentIndex].classList.add('thumb--active');
+        }
+
+        prevBtn.addEventListener('click', () => {
+            let newIndex = (currentIndex === 0) ? images.length - 1 : currentIndex - 1;
+            updateGallery(newIndex);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            let newIndex = (currentIndex === images.length - 1) ? 0 : currentIndex + 1;
+            updateGallery(newIndex);
+        });
+
+        function setImage(index) {
+            updateGallery(index);
+        }
+    </script>
+</body>
+</html>

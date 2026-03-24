@@ -1,0 +1,25 @@
+{
+  "name": "webdev-project",
+  "version": "1.0.0",
+  "description": "Admin login system using Node.js and Bootstrap",
+  "homepage": "https://github.com/cepopf/webdev-project#readme",
+  "bugs": {
+    "url": "https://github.com/cepopf/webdev-project/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cepopf/webdev-project.git"
+  },
+  "license": "ISC",
+  "author": "Punnama",
+  "type": "commonjs",
+  "main": "script.js",
+  "scripts": {
+    "start": "nodemon script.js"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
