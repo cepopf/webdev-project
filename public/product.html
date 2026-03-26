@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Product Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ddeeff;
+      --surface: #c8e0f4;
+      --card: #fdf9e8;
+      --card-hover: #fffbe8;
+      --accent: #4a90c4;
+      --accent-light: #7ab8e0;
+      --accent-dark: #2d6a96;
+      --danger: #e88080;
+      --danger-hover: #d45f5f;
+      --text: #2c3e50;
+      --text-muted: #7a8fa0;
+      --border: #b5d0e8;
+      --btn-border: #8ab5d5;
+      --shadow: 0 4px 24px rgba(74,144,196,0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --font: 'Sarabun', 'Noto Sans Thai', sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Page System ── */
+    .page { display: none; width: 100%; max-width: 760px; padding: 20px; animation: fadeIn 0.25s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── Window Chrome ── */
+    .window {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .titlebar {
+      background: var(--surface);
+      padding: 10px 16px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot.red { background: #ff5f57; }
+    .dot.yellow { background: #febc2e; }
+    .dot.green { background: #28c840; }
+
+    /* ── Top Bar ── */
+    .topbar {
+      background: var(--accent);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .topbar.right { justify-content: flex-end; }
+
+    .search-wrap {
+      flex: 1;
+      max-width: 340px;
+      position: relative;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 8px 16px 8px 38px;
+      border-radius: 20px;
+      border: none;
+      background: #fff;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+    }
+    .search-wrap::before {
+      content: "🔍";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+    }
+
+    .btn {
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 18px;
+      border-radius: 20px;
+      border: 1.5px solid var(--btn-border);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--card-hover); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
+    .btn.primary:hover { background: var(--accent-dark); }
+    .btn.danger { background: var(--danger); color: #fff; border-color: #c86060; }
+    .btn.danger:hover { background: var(--danger-hover); }
+    .btn.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,0.6); }
+    .btn.ghost:hover { background: rgba(255,255,255,0.15); }
+
+    /* ── Content Area ── */
+    .content { padding: 20px; }
+
+    /* ── Product Table ── */
+    .product-table { width: 100%; border-collapse: collapse; }
+    .product-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      border-bottom: 1.5px solid var(--border);
+    }
+    .product-table td {
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    .product-row {
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      transition: background 0.15s;
+    }
+    .product-row:hover { background: var(--card-hover); }
+    .product-row td:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+    .product-row td:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; text-align: right; }
+    .table-gap { height: 8px; }
+
+    /* ── Add New Product Button ── */
+    .add-product-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 16px;
+      transition: all 0.18s;
+    }
+    .add-product-btn:hover { background: var(--card-hover); transform: translateY(-1px); box-shadow: 0 3px 12px rgba(0,0,0,0.08); }
+    .add-product-btn .icon { font-size: 22px; }
+
+    /* ── Form Layout ── */
+    .form-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .image-upload {
+      background: var(--card);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.18s;
+      color: var(--text-muted);
+      font-size: 13px;
+      gap: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .image-upload:hover { border-color: var(--accent); background: #f0f8ff; }
+    .image-upload .img-icon { font-size: 40px; opacity: 0.5; }
+    .image-upload img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+    .image-upload input[type=file] { display: none; }
+
+    .form-fields { display: flex; flex-direction: column; gap: 10px; }
+
+    .field-group { display: flex; flex-direction: column; gap: 4px; }
+    .field-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); padding-left: 4px; }
+
+    .form-input {
+      width: 100%;
+      padding: 9px 14px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus { border-color: var(--accent); background: #fff; }
+    .form-input.textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Form Actions ── */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* ── Modal Overlay ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    }
+    .modal-box h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+    .modal-actions { display: flex; justify-content: center; gap: 12px; }
+
+    /* ── Log Panel ── */
+    .log-panel {
+      display: none;
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: 300px;
+      background: #1a2332;
+      color: #a8d8a8;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      z-index: 50;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+    }
+    .log-panel.active { display: block; }
+    .log-entry { padding: 4px 0; border-bottom: 1px solid #2a3a4a; }
+    .log-entry .time { color: #6a9ab0; }
+    .log-panel h4 { color: #fff; margin-bottom: 12px; font-size: 13px; display: flex; justify-content: space-between; }
+
+    /* ── Responsive ── */
+    @media (max-width: 540px) {
+      .form-layout { grid-template-columns: 1fr; }
+      .image-upload { aspect-ratio: auto; min-height: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 : Admin List
+══════════════════════════════════════════ -->
+<div id="page-list" class="page active">
+  <div class="window">
+    <div class="titlebar">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+    </div>
+    <div class="topbar">
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="Search for product" oninput="filterProducts()" />
+      </div>
+      <button class="btn ghost" onclick="toggleLog()">📋 Log</button>
+      <button class="btn ghost" onclick="logout()">⏏ Logout</button>
+    </div>
+    <div class="content">
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Product ID</th>
+            <th>Price</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="product-tbody"></tbody>
+      </table>
+      <button class="add-product-btn" onclick="openAdd()">
+        <span class="icon">🧸</span> Add new product
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 : Admin Add
+══════════════════════════════════════════ -->
+<div id="page-add" class="page">
+  <div class="window">
+    <div class="titlebar">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+    </div>
+    <div class="topbar right">
+      <button class="btn ghost" onclick="goBack()">◀◀ Back</button>
+      <button class="btn ghost" onclick="logout()">⏏ Logout</button>
+    </div>
+    <div class="content">
+      <div class="form-layout">
+        <label class="image-upload" id="add-img-label">
+          <input type="file" accept="image/*" onchange="previewImage(event,'add-img-preview','add-img-label')" />
+          <img id="add-img-preview" src="" style="display:none" alt="preview" />
+          <span class="img-icon" id="add-img-icon">🖼️</span>
+          <span id="add-img-text">Upload Image</span>
+        </label>
+        <div class="form-fields">
+          <div class="field-group">
+            <label>Product Name:</label>
+            <input class="form-input" type="text" id="add-name" placeholder="Product Name" />
+          </div>
+          <div class="field-group">
+            <label>Price:</label>
+            <input class="form-input" type="number" id="add-price" placeholder="Price" />
+          </div>
+          <div class="field-group">
+            <label>Quantity:</label>
+            <input class="form-input" type="number" id="add-qty" placeholder="Quantity" />
+          </div>
+          <div class="field-group">
+            <label>Brand:</label>
+            <input class="form-input" type="text" id="add-brand" placeholder="Brand" />
+          </div>
+          <div class="field-group">
+            <label>Description:</label>
+            <textarea class="form-input textarea" id="add-desc" placeholder="Description"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn" onclick="goBack()">Cancel</button>
+            <button class="btn primary" onclick="addProduct()">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 3 : Admin Edit
+══════════════════════════════════════════ -->
+<div id="page-edit" class="page">
+  <div class="window">
+    <div class="titlebar">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+    </div>
+    <div class="topbar right">
+      <button class="btn ghost" onclick="goBack()">◀◀ Back</button>
+      <button class="btn ghost" onclick="logout()">⏏ Logout</button>
+    </div>
+    <div class="content">
+      <div class="form-layout">
+        <label class="image-upload" id="edit-img-label">
+          <input type="file" accept="image/*" onchange="previewImage(event,'edit-img-preview','edit-img-label')" />
+          <img id="edit-img-preview" src="" style="display:none" alt="preview" />
+          <span class="img-icon" id="edit-img-icon">🖼️</span>
+          <span id="edit-img-text">Upload Image</span>
+        </label>
+        <div class="form-fields">
+          <div class="field-group">
+            <label>Product Name:</label>
+            <input class="form-input" type="text" id="edit-name" placeholder="Product Name" />
+          </div>
+          <div class="field-group">
+            <label>Price:</label>
+            <input class="form-input" type="number" id="edit-price" placeholder="Price" />
+          </div>
+          <div class="field-group">
+            <label>Quantity:</label>
+            <input class="form-input" type="number" id="edit-qty" placeholder="Quantity" />
+          </div>
+          <div class="field-group">
+            <label>Brand:</label>
+            <input class="form-input" type="text" id="edit-brand" placeholder="Brand" />
+          </div>
+          <div class="field-group">
+            <label>Description:</label>
+            <textarea class="form-input textarea" id="edit-desc" placeholder="Description"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn danger" onclick="openDeleteModal()">Delete</button>
+            <button class="btn" onclick="goBack()">Cancel</button>
+            <button class="btn primary" onclick="updateProduct()">Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DELETE CONFIRM MODAL
+══════════════════════════════════════════ -->
+<div id="modal-delete" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Make sure you want to delete this product !!</h3>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn danger" onclick="deleteProduct()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LOG PANEL
+══════════════════════════════════════════ -->
+<div id="log-panel" class="log-panel">
+  <h4>Activity Log <button class="btn" style="padding:2px 8px;font-size:11px;" onclick="toggleLog()">✕</button></h4>
+  <div id="log-entries"></div>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────
+  let products = [
+    { id: 'MC001', name: 'Monchhichi Plush Bebichhichi', price: 495.00, qty: 20, brand: 'Monchhichi', desc: 'Cute plush toy from Japan.', img: '' },
+    { id: 'MC002', name: 'Monchhichi Baby Set', price: 890.00, qty: 8, brand: 'Monchhichi', desc: 'Baby gift set.', img: '' },
+    { id: 'SK001', name: 'Sirotan Seal Plush', price: 620.00, qty: 15, brand: 'Sirotan', desc: 'Soft seal plush toy.', img: '' },
+    { id: 'RB001', name: 'Rainbow Bear XL', price: 1200.00, qty: 5, brand: 'Bear Co.', desc: 'Extra large rainbow bear.', img: '' },
+  ];
+  let editingId = null;
+  let logs = [];
+  let addImgData = '';
+  let editImgData = '';
+
+  // ── Navigation ─────────────────────────────
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function goBack() { showPage('page-list'); renderTable(); }
+
+  function logout() {
+    addLog('User logged out');
+    alert('ออกจากระบบแล้ว');
+  }
+
+  // ── Log ────────────────────────────────────
+  function addLog(msg) {
+    const now = new Date().toLocaleTimeString('th-TH');
+    logs.unshift({ time: now, msg });
+    const el = document.getElementById('log-entries');
+    el.innerHTML = logs.map(l =>
+      `<div class="log-entry"><span class="time">[${l.time}]</span> ${l.msg}</div>`
+    ).join('');
+  }
+
+  function toggleLog() {
+    document.getElementById('log-panel').classList.toggle('active');
+  }
+
+  // ── Table Render ───────────────────────────
+  function renderTable(filter = '') {
+    const tbody = document.getElementById('product-tbody');
+    const filtered = products.filter(p =>
+      p.name.toLowerCase().includes(filter.toLowerCase()) ||
+      p.id.toLowerCase().includes(filter.toLowerCase())
+    );
+
+    tbody.innerHTML = filtered.map((p, i) => `
+      <tr class="product-row" data-id="${p.id}">
+        <td>${p.name}</td>
+        <td>${p.id}</td>
+        <td>${p.price.toFixed(2)}</td>
+        <td>
+          <button class="btn" style="padding:5px 14px;font-size:12px;" onclick="openEdit('${p.id}')">
+            Edit ✏️
+          </button>
+        </td>
+      </tr>
+      <tr class="table-gap"><td colspan="4"></td></tr>
+    `).join('');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted);">ไม่พบสินค้า</td></tr>`;
+    }
+  }
+
+  function filterProducts() {
+    renderTable(document.getElementById('search-input').value);
+  }
+
+  // ── Add Product ────────────────────────────
+  function openAdd() {
+    ['add-name','add-price','add-qty','add-brand','add-desc'].forEach(id => document.getElementById(id).value = '');
+    clearImagePreview('add-img-preview','add-img-icon','add-img-text');
+    addImgData = '';
+    showPage('page-add');
+    addLog('Opened Add Product form');
+  }
+
+  function addProduct() {
+    const name = document.getElementById('add-name').value.trim();
+    const price = parseFloat(document.getElementById('add-price').value) || 0;
+    const qty = parseInt(document.getElementById('add-qty').value) || 0;
+    const brand = document.getElementById('add-brand').value.trim();
+    const desc = document.getElementById('add-desc').value.trim();
+
+    if (!name) { alert('กรุณากรอกชื่อสินค้า'); return; }
+
+    const newId = 'P' + String(Date.now()).slice(-4);
+    products.push({ id: newId, name, price, qty, brand, desc, img: addImgData });
+    addLog(`Added product: ${name} (${newId})`);
+    goBack();
+  }
+
+  // ── Edit Product ───────────────────────────
+  function openEdit(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    editingId = id;
+    document.getElementById('edit-name').value = p.name;
+    document.getElementById('edit-price').value = p.price;
+    document.getElementById('edit-qty').value = p.qty;
+    document.getElementById('edit-brand').value = p.brand;
+    document.getElementById('edit-desc').value = p.desc;
+
+    if (p.img) {
+      const preview = document.getElementById('edit-img-preview');
+      preview.src = p.img;
+      preview.style.display = 'block';
+      document.getElementById('edit-img-icon').style.display = 'none';
+      document.getElementById('edit-img-text').style.display = 'none';
+    } else {
+      clearImagePreview('edit-img-preview','edit-img-icon','edit-img-text');
+    }
+    editImgData = p.img || '';
+    showPage('page-edit');
+    addLog(`Opened Edit for: ${p.name}`);
+  }
+
+  function updateProduct() {
+    const p = products.find(x => x.id === editingId);
+    if (!p) return;
+    p.name = document.getElementById('edit-name').value.trim();
+    p.price = parseFloat(document.getElementById('edit-price').value) || 0;
+    p.qty = parseInt(document.getElementById('edit-qty').value) || 0;
+    p.brand = document.getElementById('edit-brand').value.trim();
+    p.desc = document.getElementById('edit-desc').value.trim();
+    p.img = editImgData;
+    addLog(`Updated product: ${p.name} (${p.id})`);
+    goBack();
+  }
+
+  // ── Delete Product ─────────────────────────
+  function openDeleteModal() {
+    document.getElementById('modal-delete').classList.add('active');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('modal-delete').classList.remove('active');
+  }
+
+  function deleteProduct() {
+    const p = products.find(x => x.id === editingId);
+    if (p) {
+      addLog(`Deleted product: ${p.name} (${p.id})`);
+      products = products.filter(x => x.id !== editingId);
+    }
+    closeDeleteModal();
+    goBack();
+  }
+
+  // ── Image Helpers ──────────────────────────
+  function previewImage(event, previewId, labelId) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target.result;
+      const preview = document.getElementById(previewId);
+      preview.src = data;
+      preview.style.display = 'block';
+
+      if (previewId === 'add-img-preview') addImgData = data;
+      else editImgData = data;
+
+      const parts = previewId.replace('-preview','');
+      document.getElementById(parts + '-icon').style.display = 'none';
+      document.getElementById(parts + '-text').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearImagePreview(previewId, iconId, textId) {
+    const preview = document.getElementById(previewId);
+    preview.src = '';
+    preview.style.display = 'none';
+    document.getElementById(iconId).style.display = '';
+    document.getElementById(textId).style.display = '';
+  }
+
+  // ── Init ───────────────────────────────────
+  renderTable();
+  addLog('Admin session started');
+</script>
+</body>
+</html>
