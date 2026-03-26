@@ -57,7 +57,13 @@
     }
 
     .top-actions,
-    .form-actions,
+    .form-actions{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
     .action-row{
       margin-top:28px;
       display:flex;
@@ -245,11 +251,15 @@
       font-family:inherit;
     }
 
-    .input{height:74px}
+    .input{
+      height:74px;
+    }
 
     .textarea{
-      height:230px;
+      min-height:74px;
+      height:74px;
       resize:none;
+      overflow:hidden;
     }
 
     .hidden{display:none !important}
@@ -312,7 +322,10 @@
       .top-actions{gap:10px}
       .btn.small{min-width:90px}
       .input{height:62px}
-      .textarea{height:180px}
+      .textarea{
+        min-height:62px;
+        height:62px;
+      }
       .image-box{height:280px}
     }
   </style>
@@ -344,7 +357,13 @@
               <div></div>
             </div>
             <div class="rows" id="productRows"></div>
-            <button class="btn add" id="goAdd"><span class="brand-badge"><span class="bear">🧸</span><span>Belle Bear</span></span><span>Add new product</span></button>
+            <button class="btn add" id="goAdd">
+              <span class="brand-badge">
+                <span class="bear">🧸</span>
+                <span>Belle Bear</span>
+              </span>
+              <span>Add new product</span>
+            </button>
           </div>
         </section>
 
@@ -419,13 +438,14 @@
     const imageUpload = document.getElementById('imageUpload');
     const previewImage = document.getElementById('previewImage');
     const imageLabel = document.getElementById('imageLabel');
+    const textarea = document.getElementById('productDesc');
 
     const formEls = {
       name: document.getElementById('productName'),
       price: document.getElementById('productPrice'),
       qty: document.getElementById('productQty'),
       brand: document.getElementById('productBrand'),
-      desc: document.getElementById('productDesc')
+      desc: textarea
     };
 
     let products = [
@@ -471,6 +491,12 @@
     let editIndex = null;
     let currentImage = '';
 
+    function autoResizeTextarea() {
+      const baseHeight = window.innerWidth <= 720 ? 62 : 74;
+      textarea.style.height = baseHeight + 'px';
+      textarea.style.height = Math.max(textarea.scrollHeight, baseHeight) + 'px';
+    }
+
     function showView(mode){
       currentMode = mode;
       if(mode === 'list'){
@@ -488,12 +514,14 @@
         pageTitle.textContent = 'Admin Add';
         submitBtn.textContent = 'Add';
         deleteBtn.classList.add('hidden');
+        setTimeout(autoResizeTextarea, 0);
       }
 
       if(mode === 'edit'){
         pageTitle.textContent = 'Admin Edit';
         submitBtn.textContent = 'Update';
         deleteBtn.classList.remove('hidden');
+        setTimeout(autoResizeTextarea, 0);
       }
     }
 
@@ -530,6 +558,7 @@
       previewImage.src = '';
       imageLabel.classList.remove('has-image');
       imageUpload.value = '';
+      autoResizeTextarea();
     }
 
     function fillForm(product){
@@ -546,6 +575,7 @@
         previewImage.src = '';
         imageLabel.classList.remove('has-image');
       }
+      autoResizeTextarea();
     }
 
     function openAdd(){
@@ -597,6 +627,9 @@
     backToList.addEventListener('click', () => showView('list'));
     cancelBtn.addEventListener('click', () => showView('list'));
     searchInput.addEventListener('input', renderProducts);
+
+    textarea.addEventListener('input', autoResizeTextarea);
+    window.addEventListener('resize', autoResizeTextarea);
 
     submitBtn.addEventListener('click', () => {
       const data = getFormData();
@@ -653,6 +686,7 @@
     document.getElementById('btnLogout2').addEventListener('click', () => alert('Logout'));
 
     renderProducts();
+    autoResizeTextarea();
   </script>
 </body>
 </html>
