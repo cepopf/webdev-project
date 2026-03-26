@@ -1,0 +1,57 @@
+/* ===== CHOOSE YOUR FAVORITE BRAND ===== */
+.brand-section {
+  background: var(--white);
+  padding: 16px;
+}
+
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-width: 580px;
+  margin: 16px auto 0;
+}
+
+.brand-card {
+  background: #f9f9f9;
+  border-radius: 16px;
+  padding: 12px;
+  height: 100px;
+  border: 1.5px solid #eee;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.brand-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  background: #ffffff;
+}
+
+.brand-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 900;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.brand-logo img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.brand-logo span {
+  font-size: 11px;
+  font-weight: 900;
+}
