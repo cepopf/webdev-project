@@ -3,6 +3,23 @@ const port = 3000;
 const path = require('path');
 const app = express();
 const router = express.Router();
+const mysql = require('mysql2');
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'BBB888', 
+  database: 'Belle_Bear'
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('DB connect error:', err);
+  } else {
+    console.log('Connected to MySQL');
+  }
+});
+
 router.use(express.json());
 app.use(express.static('public'));
 router.use(express.urlencoded({ extended: true }));
