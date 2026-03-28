@@ -1,335 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Product Page</title>
   <style>
-    :root{
-      --bg:#efefef;
-      --panel:#c7e5f5;
-      --card:#efe9d6;
-      --line:#2f2f2f;
-      --text:#5b5555;
-      --danger:#f0dcd8;
-      --edit:#cfdcf3;
+    :root {
+      --bg: #efefef;
+      --panel: #c7e5f5;
+      --card: #efe9d6;
+      --line: #2f2f2f;
+      --text: #5b5555;
+      --danger: #f0dcd8;
+      --edit: #cfdcf3;
     }
 
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      font-family:"Trebuchet MS","Segoe UI",Tahoma,sans-serif;
-      background:var(--bg);
-      color:#1c1c1c;
-      min-height:100vh;
+    * {
+      box-sizing: border-box
     }
 
-    .app{
-      width:100%;
-      padding:22px 24px;
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: #1c1c1c;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 100%;
+      padding: 22px 24px;
     }
 
     .window-title,
-    .browser-top{
-      display:none;
+    .browser-top {
+      display: none;
     }
 
     .browser,
-    .page{
-      background:transparent;
-      border:none;
-      box-shadow:none;
-      padding:0;
-      width:100%;
+    .page {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      width: 100%;
     }
 
-    .toolbar{
-      background:var(--panel);
-      border-radius:24px;
-      padding:18px 28px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:22px;
-      min-height:88px;
+    .toolbar {
+      background: var(--panel);
+      border-radius: 24px;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      min-height: 88px;
     }
 
     .top-actions,
-    .form-actions{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
+    .form-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
-    .action-row{
-      margin-top:28px;
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      align-items:center;
-      padding-left:6px;
+    .action-row {
+      margin-top: 28px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-left: 6px;
     }
 
-    .btn{
-      border:2px solid var(--line);
-      background:#edf4f8;
-      color:#564f4f;
-      border-radius:24px;
-      padding:9px 18px;
-      font-size:18px;
-      line-height:1;
-      cursor:pointer;
-      font-family:inherit;
+    .btn {
+      border: 2px solid var(--line);
+      background: #edf4f8;
+      color: #564f4f;
+      border-radius: 24px;
+      padding: 9px 18px;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      font-family: inherit;
     }
 
-    .btn.small{
-      min-width:96px;
-      height:50px;
-      font-size:16px;
-      padding:8px 16px;
+    .btn.small {
+      min-width: 96px;
+      height: 50px;
+      font-size: 16px;
+      padding: 8px 16px;
     }
 
-    .btn.primary{background:#edf4f8}
-    .btn.danger{background:var(--danger)}
-    .btn.edit{
-      background:var(--edit);
-      min-width:104px;
-      height:40px;
-      font-size:16px;
-      padding:6px 16px;
-      border-radius:20px;
+    .btn.primary {
+      background: #edf4f8
     }
 
-    .btn.add{
-      background:var(--card);
-      min-width:360px;
-      min-height:94px;
-      font-size:24px;
-      justify-content:flex-start;
-      display:flex;
-      align-items:center;
-      gap:16px;
-      padding:14px 18px;
-      text-align:left;
+    .btn.danger {
+      background: var(--danger)
     }
 
-    .brand-badge{
-      width:62px;
-      height:62px;
-      border-radius:18px;
-      background:linear-gradient(180deg,#f6efe7,#efe6da);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      color:#b48e8e;
-      font-size:11px;
-      line-height:1.05;
-      flex:0 0 auto;
+    .btn.edit {
+      background: var(--edit);
+      min-width: 104px;
+      height: 40px;
+      font-size: 16px;
+      padding: 6px 16px;
+      border-radius: 20px;
     }
 
-    .brand-badge .bear{font-size:24px}
-
-    .search{
-      width:100%;
-      max-width:420px;
-      display:flex;
-      align-items:center;
-      gap:12px;
-      background:#edf4f8;
-      border:2px solid var(--line);
-      border-radius:20px;
-      padding:10px 16px;
-      height:54px;
+    .btn.add {
+      background: var(--card);
+      min-width: 360px;
+      min-height: 94px;
+      font-size: 24px;
+      justify-content: flex-start;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      text-align: left;
     }
 
-    .search input{
-      width:100%;
-      border:none;
-      outline:none;
-      background:transparent;
-      font-size:18px;
-      color:var(--text);
-      font-family:inherit;
-    }
-
-    .panel{
-      background:var(--panel);
-      border-radius:24px;
-      padding:20px 26px;
-      width:100%;
-    }
-
-    .table-head{
-      display:grid;
-      grid-template-columns:2.5fr 1fr 1fr 150px;
-      gap:12px;
-      text-align:center;
-      font-size:16px;
-      padding:6px 14px 14px;
-    }
-
-    .rows{
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      margin-bottom:20px;
-    }
-
-    .product-row{
-      display:grid;
-      grid-template-columns:2.5fr 1fr 1fr 150px;
-      gap:12px;
-      align-items:center;
-      background:var(--card);
-      border:2px solid var(--line);
-      border-radius:20px;
-      padding:16px 18px;
-      min-height:92px;
-      text-align:center;
-      font-size:18px;
-    }
-
-    .product-row.empty{color:#999}
-
-    .layout{
-      display:grid;
-      grid-template-columns:1fr 1.06fr;
-      gap:26px;
-      align-items:start;
-    }
-
-    .image-box{
-      width:100%;
-      height:430px;
-      background:var(--card);
-      border:2px solid var(--line);
-      border-radius:24px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+    .brand-badge {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #f6efe7, #efe6da);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #b48e8e;
+      font-size: 11px;
+      line-height: 1.05;
+      flex: 0 0 auto;
       overflow:hidden;
-      position:relative;
     }
 
-    .image-box img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:none;
+    .brand-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius:18px;
     }
 
-    .image-box.has-image img{display:block}
-    .image-box.has-image .placeholder{display:none}
-
-    .placeholder{
-      font-size:74px;
-      opacity:.75;
+    .brand-badge .bear {
+      font-size: 24px
     }
 
-    .upload-input{display:none}
+    .search {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #edf4f8;
+      border: 2px solid var(--line);
+      border-radius: 20px;
+      padding: 10px 16px;
+      height: 54px;
+    }
 
-    .fields{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
+    .search input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 18px;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 24px;
+      padding: 20px 26px;
+      width: 100%;
+    }
+
+    .table-head {
+      display: grid;
+      grid-template-columns: 2.5fr 1fr 1fr 150px;
+      gap: 12px;
+      text-align: center;
+      font-size: 16px;
+      padding: 6px 14px 14px;
+    }
+
+    .rows {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .product-row {
+      display: grid;
+      grid-template-columns: 2.5fr 1fr 1fr 150px;
+      gap: 12px;
+      align-items: center;
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 20px;
+      padding: 16px 18px;
+      min-height: 92px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .product-row.empty {
+      color: #999
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1.06fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .image-box {
+      width: 100%;
+      height: 540px;
+      background: #ffffff;
+      border: 2px solid var(--line);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .image-box.has-image img {
+      display: block
+    }
+
+    .image-box.has-image .placeholder {
+      display: none
+    }
+
+    .placeholder {
+      font-size: 74px;
+      opacity: .75;
+    }
+
+    .upload-input {
+      display: none
+    }
+
+    .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .input,
-    .textarea{
-      width:100%;
-      background:var(--card);
-      border:2px solid var(--line);
-      border-radius:22px;
-      padding:16px 20px;
-      font-size:17px;
-      color:var(--text);
-      outline:none;
-      font-family:inherit;
+    .textarea {
+      width: 100%;
+      background: var(--card);
+      border: 2px solid var(--line);
+      border-radius: 22px;
+      padding: 16px 20px;
+      font-size: 17px;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
     }
 
-    .input{
-      height:74px;
+    .input {
+      height: 74px;
     }
 
-    .textarea{
-      min-height:74px;
-      height:74px;
-      resize:none;
-      overflow:hidden;
+    .textarea {
+      min-height: 74px;
+      height: 74px;
+      resize: none;
+      overflow: hidden;
     }
 
-    .hidden{display:none !important}
-
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.2);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:50;
-      padding:20px;
+    .hidden {
+      display: none !important
     }
 
-    .modal{
-      width:min(700px,100%);
-      background:#eceaea;
-      border-radius:16px;
-      padding:28px 24px 34px;
-      text-align:center;
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
     }
 
-    .modal-head{
-      display:flex;
-      gap:10px;
-      margin-bottom:22px;
+    .modal {
+      width: min(700px, 100%);
+      background: #eceaea;
+      border-radius: 16px;
+      padding: 28px 24px 34px;
+      text-align: center;
     }
 
-    .modal-dot{
-      width:16px;
-      height:16px;
-      border-radius:50%;
+    .modal-head {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
     }
 
-    .modal-dot.red{background:#ff6e61}
-    .modal-dot.yellow{background:#f5b333}
-    .modal-dot.green{background:#2fbf46}
-
-    .modal p{
-      margin:10px 0 34px;
-      font-size:24px;
-      font-weight:700;
-      color:#4f4747;
+    .modal-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
     }
 
-    @media (max-width: 980px){
-      .layout{grid-template-columns:1fr}
-      .image-box{height:340px}
-      .btn.add{min-width:100%; width:100%}
+    .modal-dot.red {
+      background: #ff6e61
     }
 
-    @media (max-width: 720px){
-      .app{padding:14px}
-      .toolbar{padding:14px 16px; min-height:auto}
-      .table-head{display:none}
-      .product-row{grid-template-columns:1fr; text-align:left}
-      .product-row > div:last-child{justify-self:start}
-      .search{max-width:none}
-      .top-actions{gap:10px}
-      .btn.small{min-width:90px}
-      .input{height:62px}
-      .textarea{
-        min-height:62px;
-        height:62px;
+    .modal-dot.yellow {
+      background: #f5b333
+    }
+
+    .modal-dot.green {
+      background: #2fbf46
+    }
+
+    .modal p {
+      margin: 10px 0 34px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #4f4747;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr
       }
-      .image-box{height:280px}
+
+      .image-box {
+        height: 340px
+      }
+
+      .btn.add {
+        min-width: 100%;
+        width: 100%
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        padding: 14px
+      }
+
+      .toolbar {
+        padding: 14px 16px;
+        min-height: auto
+      }
+
+      .table-head {
+        display: none
+      }
+
+      .product-row {
+        grid-template-columns: 1fr;
+        text-align: left
+      }
+
+      .product-row>div:last-child {
+        justify-self: start
+      }
+
+      .search {
+        max-width: none
+      }
+
+      .top-actions {
+        gap: 10px
+      }
+
+      .btn.small {
+        min-width: 90px
+      }
+
+      .input {
+        height: 62px
+      }
+
+      .textarea {
+        min-height: 62px;
+        height: 62px;
+      }
+
+      .image-box {
+        height: 280px
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="app">
     <div class="window-title" id="pageTitle">Admin Page</div>
@@ -360,8 +440,7 @@
             <div class="rows" id="productRows"></div>
             <button class="btn add" id="goAdd">
               <span class="brand-badge">
-                <span class="bear">🧸</span>
-                <span>Belle Bear</span>
+                <img src="logo.jpg" class="add-icon">
               </span>
               <span>Add new product</span>
             </button>
@@ -409,7 +488,7 @@
   </div>
 
   <!-- popup delete product -->
-  <div id="deleteModal" class="modal-backdrop hidden"> 
+  <div id="deleteModal" class="modal-backdrop hidden">
     <div class="modal">
       <div class="modal-head">
         <span class="modal-dot red"></span>
@@ -460,25 +539,25 @@
         quantity: 130,
         brand: 'Monchhichi',
         description: 'A cute and collectible Bebichhichi plush doll from the Monchhichi series. Made with soft, high-quality materials, featuring the iconic thumb-sucking pose and adorable outfit. Perfect for kids, collectors, or as a gift.',
-        image: ''
+        image: 'MC001.jpg'
       },
       {
         id: 'MC002',
-        name: 'Hello Kitty X Monchhichi',
+        name: 'Hello Kitty X Monchhichi Part 2',
         price: 650.00,
         quantity: 146,
         brand: 'Monchhichi',
-        description: 'A special collaboration plush doll featuring Monchhichi dressed in Hello Kitty style. Soft, adorable, and perfect for collectors and fans of Sanrio.',
-        image: ''
+        description: 'Monchhichi Sweet Sugar plush doll featuring soft pastel colors and a cute sweet-themed outfit. Made with high-quality materials and the iconic thumb-sucking pose, perfect for collectors and gift giving.',
+        image: 'MC002.jpg'
       },
       {
         id: 'MC003',
-        name: 'Monchhichi Sweeet Brown Plush Doll',
-        price: '890.00',
+        name: 'Monchhichi Sweet Sugar Plush Doll',
+        price: '90.00',
         quantity: '92',
         brand: 'Monchhichi',
         description: 'Classic Monchhichi Sweeet Brown plush doll featuring soft brown fur and the iconic thumb-sucking pose. A timeless collectible toy from Japan, perfect for kids and collectors.',
-        image: ''
+        image: 'MC003.jpg'
       },
       {
         id: 'MC004',
@@ -487,7 +566,7 @@
         quantity: 16,
         brand: 'Sanrio x Rody',
         description: 'Adorable collaboration plush featuring Usahana with the iconic Rody horse design in soft pastel colors. Perfect for collectors and fans of cute Japanese characters.',
-        image: ''
+        image: 'MC004.jpg'
       }
     ];
 
@@ -503,9 +582,9 @@
     }
 
     // List ↔ Form
-    function showView(mode){
+    function showView(mode) {
       currentMode = mode;
-      if(mode === 'list'){
+      if (mode === 'list') {
         viewList.classList.remove('hidden');
         viewForm.classList.add('hidden');
         pageTitle.textContent = 'Admin Page';
@@ -516,14 +595,14 @@
       viewList.classList.add('hidden');
       viewForm.classList.remove('hidden');
 
-      if(mode === 'add'){
+      if (mode === 'add') {
         pageTitle.textContent = 'Admin Add';
         submitBtn.textContent = 'Add';
         deleteBtn.classList.add('hidden');
         setTimeout(autoResizeTextarea, 0);
       }
 
-      if(mode === 'edit'){
+      if (mode === 'edit') {
         pageTitle.textContent = 'Admin Edit';
         submitBtn.textContent = 'Update';
         deleteBtn.classList.remove('hidden');
@@ -532,7 +611,7 @@
     }
 
     // แสดงสินค้า
-    function renderProducts(){
+    function renderProducts() {
       const keyword = searchInput.value.trim().toLowerCase();
       const filtered = products.filter(p => {
         return [p.name, p.id, p.brand].some(v => String(v).toLowerCase().includes(keyword));
@@ -555,7 +634,7 @@
       });
     }
 
-    function resetForm(){
+    function resetForm() {
       formEls.name.value = '';
       formEls.price.value = '';
       formEls.qty.value = '';
@@ -568,43 +647,43 @@
       autoResizeTextarea();
     }
 
-    function fillForm(product){
+    function fillForm(product) {
       formEls.name.value = product.name || '';
       formEls.price.value = product.price ?? '';
       formEls.qty.value = product.quantity ?? '';
       formEls.brand.value = product.brand || '';
       formEls.desc.value = product.description || '';
       currentImage = product.image || '';
-      if(currentImage){
+      if (currentImage) {
         previewImage.src = currentImage;
         imageLabel.classList.add('has-image');
-      }else{
+      } else {
         previewImage.src = '';
         imageLabel.classList.remove('has-image');
       }
       autoResizeTextarea();
     }
 
-    function openAdd(){
+    function openAdd() {
       editIndex = null;
       resetForm();
       showView('add');
     }
 
-    function openEdit(index){
+    function openEdit(index) {
       editIndex = index;
       fillForm(products[index]);
       showView('edit');
     }
 
     // สร้าง ID อัตโนมัติ
-    function generateId(){
+    function generateId() {
       const next = products.length + 1;
-      return 'MC' + String(next).padStart(3,'0');
+      return 'MC' + String(next).padStart(3, '0');
     }
 
     // ค่าจาก input → สร้าง object
-    function getFormData(){
+    function getFormData() {
       return {
         id: editIndex === null ? generateId() : products[editIndex].id,
         name: formEls.name.value.trim(),
@@ -617,16 +696,16 @@
     }
 
     // ตรวจสอบข้อมูล
-    function validateForm(data){
-      if(!data.name){
+    function validateForm(data) {
+      if (!data.name) {
         alert('Please enter a product name.');
         return false;
       }
-      if(Number.isNaN(data.price)){
+      if (Number.isNaN(data.price)) {
         alert('Please enter a valid price.');
         return false;
       }
-      if(Number.isNaN(data.quantity)){
+      if (Number.isNaN(data.quantity)) {
         alert('Please enter a valid quantity.');
         return false;
       }
@@ -643,11 +722,11 @@
 
     submitBtn.addEventListener('click', () => { // เพิ่มสินค้า mode = add
       const data = getFormData();
-      if(!validateForm(data)) return;
+      if (!validateForm(data)) return;
 
-      if(currentMode === 'add'){
+      if (currentMode === 'add') {
         products.push(data);
-      }else if(currentMode === 'edit' && editIndex !== null){
+      } else if (currentMode === 'edit' && editIndex !== null) {
         products[editIndex] = data; // แก้ไขสินค้า
       }
 
@@ -665,15 +744,15 @@
     });
 
     confirmDelete.addEventListener('click', () => {
-      if(editIndex !== null){
-        products.splice(editIndex,1); // ลบสินค้าออกจาก array
+      if (editIndex !== null) {
+        products.splice(editIndex, 1); // ลบสินค้าออกจาก array
       }
       deleteModal.classList.add('hidden');
       showView('list');
     });
 
     deleteModal.addEventListener('click', (e) => {
-      if(e.target === deleteModal){
+      if (e.target === deleteModal) {
         deleteModal.classList.add('hidden');
         pageTitle.textContent = 'Admin Edit';
       }
@@ -681,7 +760,7 @@
 
     imageUpload.addEventListener('change', (e) => {
       const file = e.target.files[0];
-      if(!file) return;
+      if (!file) return;
       const reader = new FileReader(); // อัปโหลดรูป
       reader.onload = () => {
         currentImage = reader.result;
@@ -699,4 +778,5 @@
     autoResizeTextarea();
   </script>
 </body>
+
 </html>
