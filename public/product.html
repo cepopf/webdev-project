@@ -95,6 +95,19 @@
       padding: 8px 16px;
     }
 
+    #backToList {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .back-icon {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      margin-right: 6px;
+    }
+
     .btn.primary {
       background: #edf4f8
     }
@@ -173,6 +186,14 @@
       font-size: 18px;
       color: var(--text);
       font-family: inherit;
+    }
+
+    .search-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      flex: 0 0 22px;
+      display: block;
     }
 
     .panel {
@@ -430,7 +451,7 @@
         <section id="view-list">
           <div class="toolbar">
             <label class="search">
-              <span>🔎</span>
+              <img src="search.png" class="search-icon">
               <input id="searchInput" type="text" placeholder="Search for product" />
             </label>
             <div class="top-actions">
@@ -461,7 +482,10 @@
           <div class="toolbar">
             <div></div>
             <div class="top-actions">
-              <button class="btn small" id="backToList">⏪ Back</button>
+              <button class="btn small" id="backToList">
+                <img src="back.png" class="back-icon">
+                Back
+              </button>
               <button class="btn small" id="btnLogout2">⊖ Logout</button>
             </div>
           </div>
