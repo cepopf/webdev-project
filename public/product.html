@@ -337,6 +337,7 @@
     <div class="browser">
       <div class="browser-top"></div>
       <div class="page">
+        <!-- list (product list) -->
         <section id="view-list">
           <div class="toolbar">
             <label class="search">
@@ -367,6 +368,7 @@
           </div>
         </section>
 
+        <!-- form (add/edit) -->
         <section id="view-form" class="hidden">
           <div class="toolbar">
             <div></div>
@@ -406,7 +408,8 @@
     </div>
   </div>
 
-  <div id="deleteModal" class="modal-backdrop hidden">
+  <!-- popup delete product -->
+  <div id="deleteModal" class="modal-backdrop hidden"> 
     <div class="modal">
       <div class="modal-head">
         <span class="modal-dot red"></span>
@@ -425,7 +428,7 @@
     const pageTitle = document.getElementById('pageTitle');
     const viewList = document.getElementById('view-list');
     const viewForm = document.getElementById('view-form');
-    const productRows = document.getElementById('productRows');
+    const productRows = document.getElementById('productRows'); // ดึง element จาก HTML มาใช้
     const searchInput = document.getElementById('searchInput');
     const goAdd = document.getElementById('goAdd');
     const backToList = document.getElementById('backToList');
@@ -448,41 +451,42 @@
       desc: textarea
     };
 
+    // product list
     let products = [
       {
         id: 'MC001',
         name: 'Monchhichi Plush Bebichhichi',
         price: 495.00,
-        quantity: 12,
+        quantity: 130,
         brand: 'Monchhichi',
-        description: 'Soft plush toy for decoration or collecting',
+        description: 'A cute and collectible Bebichhichi plush doll from the Monchhichi series. Made with soft, high-quality materials, featuring the iconic thumb-sucking pose and adorable outfit. Perfect for kids, collectors, or as a gift.',
         image: ''
       },
       {
         id: 'MC002',
-        name: '',
-        price: '',
-        quantity: '',
-        brand: '',
-        description: '',
+        name: 'Hello Kitty X Monchhichi',
+        price: 650.00,
+        quantity: 146,
+        brand: 'Monchhichi',
+        description: 'A special collaboration plush doll featuring Monchhichi dressed in Hello Kitty style. Soft, adorable, and perfect for collectors and fans of Sanrio.',
         image: ''
       },
       {
         id: 'MC003',
-        name: '',
-        price: '',
-        quantity: '',
-        brand: '',
-        description: '',
+        name: 'Monchhichi Sweeet Brown Plush Doll',
+        price: '890.00',
+        quantity: '92',
+        brand: 'Monchhichi',
+        description: 'Classic Monchhichi Sweeet Brown plush doll featuring soft brown fur and the iconic thumb-sucking pose. A timeless collectible toy from Japan, perfect for kids and collectors.',
         image: ''
       },
       {
         id: 'MC004',
-        name: '',
-        price: '',
-        quantity: '',
-        brand: '',
-        description: '',
+        name: 'Usahana x Rody Collaboration Plush',
+        price: 750.00,
+        quantity: 16,
+        brand: 'Sanrio x Rody',
+        description: 'Adorable collaboration plush featuring Usahana with the iconic Rody horse design in soft pastel colors. Perfect for collectors and fans of cute Japanese characters.',
         image: ''
       }
     ];
@@ -491,12 +495,14 @@
     let editIndex = null;
     let currentImage = '';
 
+    // Auto resize textarea
     function autoResizeTextarea() {
       const baseHeight = window.innerWidth <= 720 ? 62 : 74;
       textarea.style.height = baseHeight + 'px';
       textarea.style.height = Math.max(textarea.scrollHeight, baseHeight) + 'px';
     }
 
+    // List ↔ Form
     function showView(mode){
       currentMode = mode;
       if(mode === 'list'){
@@ -525,6 +531,7 @@
       }
     }
 
+    // แสดงสินค้า
     function renderProducts(){
       const keyword = searchInput.value.trim().toLowerCase();
       const filtered = products.filter(p => {
@@ -590,11 +597,13 @@
       showView('edit');
     }
 
+    // สร้าง ID อัตโนมัติ
     function generateId(){
       const next = products.length + 1;
       return 'MC' + String(next).padStart(3,'0');
     }
 
+    // ค่าจาก input → สร้าง object
     function getFormData(){
       return {
         id: editIndex === null ? generateId() : products[editIndex].id,
@@ -607,6 +616,7 @@
       };
     }
 
+    // ตรวจสอบข้อมูล
     function validateForm(data){
       if(!data.name){
         alert('Please enter a product name.');
@@ -631,14 +641,14 @@
     textarea.addEventListener('input', autoResizeTextarea);
     window.addEventListener('resize', autoResizeTextarea);
 
-    submitBtn.addEventListener('click', () => {
+    submitBtn.addEventListener('click', () => { // เพิ่มสินค้า mode = add
       const data = getFormData();
       if(!validateForm(data)) return;
 
       if(currentMode === 'add'){
-        products.unshift(data);
+        products.push(data);
       }else if(currentMode === 'edit' && editIndex !== null){
-        products[editIndex] = data;
+        products[editIndex] = data; // แก้ไขสินค้า
       }
 
       showView('list');
@@ -656,7 +666,7 @@
 
     confirmDelete.addEventListener('click', () => {
       if(editIndex !== null){
-        products.splice(editIndex,1);
+        products.splice(editIndex,1); // ลบสินค้าออกจาก array
       }
       deleteModal.classList.add('hidden');
       showView('list');
@@ -672,7 +682,7 @@
     imageUpload.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if(!file) return;
-      const reader = new FileReader();
+      const reader = new FileReader(); // อัปโหลดรูป
       reader.onload = () => {
         currentImage = reader.result;
         previewImage.src = currentImage;
