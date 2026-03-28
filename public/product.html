@@ -95,17 +95,17 @@
       padding: 8px 16px;
     }
 
-    #backToList {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     .back-icon {
       width: 18px;
       height: 18px;
       object-fit: contain;
       margin-right: 6px;
+    }
+
+    #backToList {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .btn.primary {
@@ -194,6 +194,36 @@
       object-fit: contain;
       flex: 0 0 22px;
       display: block;
+    }
+
+    .logout-icon {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    #btnLogout1 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #btnLogout2 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .log-icon {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    #btnLog {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .panel {
@@ -455,8 +485,13 @@
               <input id="searchInput" type="text" placeholder="Search for product" />
             </label>
             <div class="top-actions">
-              <button class="btn small" id="btnLog">🪪 Log</button>
-              <button class="btn small" id="btnLogout1">⊖ Logout</button>
+              <button class="btn small" id="btnLog">
+                <img src="log.png" class="log-icon">
+                Log
+              </button>
+              <button class="btn small" id="btnLogout1">
+                <img src="logout.png" class="logout-icon">
+                Logout</button>
             </div>
           </div>
 
@@ -486,7 +521,9 @@
                 <img src="back.png" class="back-icon">
                 Back
               </button>
-              <button class="btn small" id="btnLogout2">⊖ Logout</button>
+              <button class="btn small" id="btnLogout2">
+                <img src="logout.png" class="logout-icon">
+                Logout</button>
             </div>
           </div>
 
