@@ -1,4 +1,4 @@
- drop database Belle_Bear;
+drop database Belle_Bear;
 
 create database Belle_Bear;
 use Belle_Bear;
@@ -114,13 +114,8 @@ INSERT INTO Product VALUES
 ('Pro000000007','Pop Mart','Skullpanda Winter Series','2023-07-01'),
 ('Pro000000008','Pop Mart','Dimoo Space Travel Series','2023-08-01'),
 ('Pro000000009','Pop Mart','Molly Sweet Heart Figure','2023-09-01'),
-('Pro000000010','Pop Mart','Crybaby Sad Club Figure','2023-10-01'),
+('Pro000000010','Pop Mart','Crybaby Sad Club Figure','2023-10-01');
 
-('Pro000000011','Bandai','Naruto Action Figure','2023-11-01'),
-('Pro000000012','Good Smile Company','Nendoroid Gojo Satoru','2023-12-01'),
-('Pro000000013','Pokemon Center','Pikachu Plush Toy','2024-01-01'),
-('Pro000000014','Disney','Stitch Plush Doll','2024-02-01'),
-('Pro000000015','Disney','Mickey Mouse Plush','2024-03-01');
 
 -- =========================
 -- Stock (match Product 15)
@@ -135,12 +130,8 @@ INSERT INTO Stock VALUES
 ('Stk000000007','M',520,18,'Pro000000007'),
 ('Stk000000008','M',550,15,'Pro000000008'),
 ('Stk000000009','M',600,12,'Pro000000009'),
-('Stk000000010','M',650,10,'Pro000000010'),
-('Stk000000011','L',1500,7,'Pro000000011'),
-('Stk000000012','M',1800,5,'Pro000000012'),
-('Stk000000013','S',700,14,'Pro000000013'),
-('Stk000000014','L',900,9,'Pro000000014'),
-('Stk000000015','L',1000,8,'Pro000000015');
+('Stk000000010','M',650,10,'Pro000000010');
+
 
 -- =========================
 -- Image (match Stock)
@@ -155,12 +146,21 @@ INSERT INTO Image VALUES
 ('Img000000007',1,'Stk000000007'),
 ('Img000000008',1,'Stk000000008'),
 ('Img000000009',1,'Stk000000009'),
-('Img000000010',1,'Stk000000010'),
-('Img000000011',1,'Stk000000011'),
-('Img000000012',1,'Stk000000012'),
-('Img000000013',1,'Stk000000013'),
-('Img000000014',1,'Stk000000014'),
-('Img000000015',1,'Stk000000015');
+('Img000000010',1,'Stk000000010');
+
+
+INSERT INTO Admin VALUES
+('Adm0000001','A','A','BKK',25),
+('Adm0000002','A','A','BKK',25),
+('Adm0000003','A','A','BKK',25),
+('Adm0000004','A','A','BKK',25),
+('Adm0000005','A','A','BKK',25),
+('Adm0000006','A','A','BKK',25),
+('Adm0000007','A','A','BKK',25),
+('Adm0000008','A','A','BKK',25),
+('Adm0000009','A','A','BKK',25),
+('Adm0000010','A','A','BKK',25);
+
 
 -- =========================
 -- Manage (Admin ↔ Product)
@@ -175,9 +175,4 @@ INSERT INTO Manage VALUES
 ('Adm0000007','Pro000000007',1,1,0),
 ('Adm0000008','Pro000000008',1,0,0),
 ('Adm0000009','Pro000000009',1,1,1),
-('Adm0000010','Pro000000010',1,0,0),
-('Adm0000001','Pro000000011',1,1,0),
-('Adm0000002','Pro000000012',1,0,0),
-('Adm0000003','Pro000000013',1,1,1),
-('Adm0000004','Pro000000014',1,0,0),
-('Adm0000005','Pro000000015',1,1,0);
+('Adm0000010','Pro000000010',1,0,0);

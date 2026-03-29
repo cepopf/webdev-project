@@ -193,6 +193,56 @@
             text-align: center;
             padding: 2rem;
         }
+
+        /* 🔥 RESULT GRID (3 per row) */
+        #results {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 👈 บังคับ 3 ช่อง */
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* 🔥 CARD */
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            background: #fff;
+            transition: 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 🔥 MOCK IMAGE */
+        .product-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #eee;
+        }
+
+        /* 🔥 SMALLER TEXT */
+        .product-card h4 {
+            font-size: 13px;
+            margin: 8px 0 4px;
+        }
+
+        .product-card p {
+            font-size: 12px;
+            margin: 0;
+            color: #555;
+        }
+
+        .no-result {
+            grid-column: 1 / -1;   /* 👈 ให้กินเต็มแถว grid */
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -230,16 +280,13 @@
 
                 <div class="form-group">
                     <label>Doll Name</label>
-                    <input type="text" placeholder="e.g., Hello Kitty">
+                    <input type="text" id="nameInput" placeholder="e.g., Hello Kitty">
                 </div>
 
                 <div class="form-group">
                     <label>Brand</label>
-                    <select>
-                        <option>All Brands</option>
-                        <option>Sanrio</option>
-                        <option>Bandai</option>
-                        <option>Disney</option>
+                    <select id="brandSelect">
+                        <option value="">All Brands</option>
                     </select>
                 </div>
 
@@ -264,13 +311,73 @@
                 </button>
             </div>
         </form>
-
+        <div id="results" class="mt-4"></div>
     </section>
 </main>
 
 <footer>
     © 2026 Belle Bear
 </footer>
+
+<script>
+async function loadBrands() {
+    const res = await fetch('http://localhost:3000/brands');
+    const data = await res.json();
+
+    const select = document.getElementById('brandSelect');
+
+    data.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.Brand;
+        option.textContent = item.Brand;
+        select.appendChild(option);
+    });
+}
+
+loadBrands();
+
+document.querySelector('.btn-search').addEventListener('click', async () => {
+
+    const name = document.getElementById('nameInput').value.trim();
+    const brand = document.getElementById('brandSelect').value;
+    const min = document.querySelectorAll('input[type="number"]')[0].value || 0;
+    const max = document.querySelectorAll('input[type="number"]')[1].value || 999999;
+
+    const res = await fetch(`http://localhost:3000/search?name=${name}&brand=${brand}&min=${min}&max=${max}`);
+    const data = await res.json();
+
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
+
+    // ❌ ไม่เจอ
+    if (data.length === 0) {
+        resultsDiv.innerHTML = `
+        <div class="no-result">
+            ❌ No result found
+        </div>
+        `;
+        return;
+    }
+
+    // ✅ เจอ
+    data.forEach(item => {
+        resultsDiv.innerHTML += `
+        <div class="product-card">
+            <img src="https://via.placeholder.com/200x140">
+            <h4>${item.Name}</h4>
+            <p>${item.Brand}</p>
+            <p>${item.Price} บาท</p>
+        </div>
+        `;
+    });
+
+});
+
+// 🔥 clear
+document.querySelector('.btn-clear').addEventListener('click', () => {
+    document.getElementById('results').innerHTML = '';
+});
+</script>
 
 </body>
 </html>
