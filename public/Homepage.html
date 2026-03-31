@@ -41,8 +41,13 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 2px 10px rgba(91,189,228,0.15);
+      position: relative;
     }
-
+    .logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
     .search-bar {
       display: flex;
       align-items: center;
@@ -84,13 +89,17 @@
     .header-icons svg:hover { transform: scale(1.15); }
 
     /* ===== NAV ===== */
-    nav {
-      background: var(--sky);
-      display: flex;
-      justify-content: center;
-      gap: 36px;
-      padding: 10px 0;
-    }
+   nav {
+  background: var(--sky);
+  display: flex;
+  justify-content: center;
+  gap: 36px;
+  padding: 10px 0;
+
+  position: sticky;   /* ✅ */
+  top: 60px;          /* ✅ ใต้ header */
+  z-index: 99;
+}
     nav a {
       text-decoration: none;
       font-weight: 700;
@@ -489,24 +498,22 @@
 
 <!-- ===== HEADER ===== -->
 <header>
+  <form action="search.html">
   <div class="search-bar">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-    </svg>
-    <input type="text" placeholder="Search" />
+   <input type="text" placeholder="Search" onclick="this.form.submit()" />
   </div>
+</form>
   <div class="logo">Belle Bear</div>
   <div class="header-icons">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <path d="M16 10a4 4 0 0 1-8 0"/>
-    </svg>
+  <svg> ... </svg>
+
+  <a href="login.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>
     </svg>
-  </div>
+  </a>
+</div>
 </header>
 
 <!-- ===== NAV ===== -->
