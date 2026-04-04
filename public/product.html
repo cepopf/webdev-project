@@ -96,15 +96,20 @@
       width: 100%;
     }
 
-    .toolbar {
+    .main-box {
       background: var(--panel);
+      border-radius: 24px;
+      padding: 20px;
+    }
+
+    .toolbar {
+      background: transparent;
       border-radius: 24px;
       padding: 18px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 22px;
       min-height: 88px;
     }
 
@@ -277,7 +282,7 @@
     }
 
     .panel {
-      background: var(--panel);
+      background: transparent;
       border-radius: 24px;
       padding: 20px 26px;
       width: 100%;
@@ -384,7 +389,7 @@
       border-radius: 22px;
       padding: 16px 20px;
       font-size: 17px;
-      color: var(--text);
+      color: #262626;
       outline: none;
       font-family: inherit;
     }
@@ -545,74 +550,83 @@
       <div class="page">
         <!-- list (product list) -->
         <section id="view-list">
-          <div class="toolbar">
-            <label class="search">
-              <img src="search.png" class="search-icon">
-              <input id="searchInput" type="text" placeholder="Search for product" />
-            </label>
-            <div class="top-actions">
-              <button class="btn small" id="btnLog">
-                <img src="log.png" class="log-icon">
-                Log
-              </button>
-              <button class="btn small" id="btnLogout1">
-                <img src="logout.png" class="logout-icon">
-                Logout</button>
-            </div>
-          </div>
+          <div class="main-box">
 
-          <div class="panel">
-            <div class="table-head">
-              <div>Product Name</div>
-              <div>Product ID</div>
-              <div>Price</div>
-              <div></div>
+            <div class="toolbar">
+              <label class="search">
+                <img src="search.png" class="search-icon">
+                <input id="searchInput" type="text" placeholder="Search for product" />
+              </label>
+              <div class="top-actions">
+                <button class="btn small" id="btnLog">
+                  <img src="log.png" class="log-icon">
+                  Log
+                </button>
+                <button class="btn small" id="btnLogout1">
+                  <img src="logout.png" class="logout-icon">
+                  Logout</button>
+              </div>
             </div>
-            <div class="rows" id="productRows"></div>
-            <button class="btn add" id="goAdd">
-              Add new product</button>
+
+            <div class="panel">
+              <div class="table-head">
+                <div>Product Name</div>
+                <div>Product ID</div>
+                <div>Price</div>
+                <div></div>
+              </div>
+              <div class="rows" id="productRows"></div>
+              <button class="btn add" id="goAdd">
+                Add new product</button>
+            </div>
           </div>
         </section>
 
         <!-- form (add/edit) -->
         <section id="view-form" class="hidden">
-          <div class="toolbar">
-            <div></div>
-            <div class="top-actions">
-              <button class="btn small" id="backToList">
-                <img src="back.png" class="back-icon">
-                Back
-              </button>
-              <button class="btn small" id="btnLogout2">
-                <img src="logout.png" class="logout-icon">
-                Logout</button>
-            </div>
-          </div>
+          <div class="main-box">
 
-          <div class="panel">
-            <div class="layout">
-              <div>
-                <label class="image-box" for="imageUpload" id="imageLabel">
-                  <div class="placeholder">
-                    <img src="addphoto.png" alt="placeholder icon">
-                  </div>
-                  <img id="previewImage" alt="Preview image" />
-                </label>
-                <input class="upload-input" id="imageUpload" type="file" accept="image/*" />
-
-                <div class="action-row">
-                  <button class="btn danger" id="deleteBtn">Delete</button>
-                  <button class="btn" id="cancelBtn">Cancel</button>
-                  <button class="btn primary" id="submitBtn">Update</button>
-                </div>
+            <div class="toolbar">
+              <div></div>
+              <div class="top-actions">
+                <button class="btn small" id="backToList">
+                  <img src="back.png" class="back-icon">
+                  Back
+                </button>
+                <button class="btn small" id="btnLogout2">
+                  <img src="logout.png" class="logout-icon">
+                  Logout
+                </button>
               </div>
+            </div>
 
-              <div class="fields">
-                <input class="input" id="productName" type="text" placeholder="Product Name:" />
-                <input class="input" id="productPrice" type="number" min="0" step="0.01" placeholder="Price:" />
-                <input class="input" id="productQty" type="number" min="0" step="1" placeholder="Quantity:" />
-                <input class="input" id="productBrand" type="text" placeholder="Brand:" />
-                <textarea class="textarea" id="productDesc" placeholder="Description:"></textarea>
+            <div class="panel">
+              <div class="layout">
+                <!-- produt image -->
+                <div>
+                  <label class="image-box" for="imageUpload" id="imageLabel">
+                    <div class="placeholder">
+                      <img src="addphoto.png" alt="placeholder icon">
+                    </div>
+                    <img id="previewImage" alt="Preview image" />
+                  </label>
+                  <input class="upload-input" id="imageUpload" type="file" accept="image/*" />
+
+                  <div class="action-row">
+                    <button class="btn danger" id="deleteBtn">Delete</button>
+                    <button class="btn" id="cancelBtn">Cancel</button>
+                    <button class="btn primary" id="submitBtn">Update</button>
+                  </div>
+                </div>
+
+                <!-- form -->
+                <div class="fields">
+                  <input class="input" id="productName" type="text" placeholder="Product Name:" />
+                  <input class="input" id="productPrice" type="number" min="0" step="0.01" placeholder="Price:" />
+                  <input class="input" id="productQty" type="number" min="0" step="1" placeholder="Quantity:" />
+                  <input class="input" id="productBrand" type="text" placeholder="Brand:" />
+                  <textarea class="textarea" id="productDesc" placeholder="Description:"></textarea>
+                </div>
               </div>
             </div>
           </div>
