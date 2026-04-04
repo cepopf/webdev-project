@@ -1,7 +1,7 @@
-drop database Belle_Bear;
+DROP DATABASE IF EXISTS Belle_Bear;
 
-create database Belle_Bear;
-use Belle_Bear;
+CREATE DATABASE Belle_Bear;
+USE Belle_Bear;
 
 -- Customer Table
 CREATE TABLE Customer (
@@ -14,7 +14,7 @@ CREATE TABLE Customer (
 
 -- Admin Table
 CREATE TABLE Admin (
-    Admin_ID CHAR(10) PRIMARY KEY,
+	Admin_ID CHAR(10) PRIMARY KEY,
     FN VARCHAR(50) NOT NULL,
     LN VARCHAR(50) NOT NULL,
     Address VARCHAR(500) NOT NULL,
@@ -25,14 +25,15 @@ CREATE TABLE Admin (
 CREATE TABLE Product (
     Product_ID CHAR(12) PRIMARY KEY,
     Brand VARCHAR(50) NOT NULL,
-    Name VARCHAR(50) NOT NULL,
-    Release_Date DATE NOT NULL
+    Name VARCHAR(100) NOT NULL,
+    Release_Date DATE NOT NULL,
+    Description TEXT NOT NULL
 );
 
 -- Stock Table
 CREATE TABLE Stock (
     Stock_ID CHAR(12) PRIMARY KEY,
-    Size VARCHAR(10),
+    Size VARCHAR(30),
     Price DECIMAL(10,2) NOT NULL CHECK (Price > 0),
     Quantity INT NOT NULL CHECK (Quantity >= 0),
     Product_ID CHAR(12) NOT NULL,
@@ -57,7 +58,6 @@ CREATE TABLE Containment (
     FOREIGN KEY (Cart_ID) REFERENCES Cart(Cart_ID),
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID)
 );
-
 
 -- Account Table
 CREATE TABLE Account (
@@ -104,34 +104,72 @@ CREATE TABLE Manage (
 -- Product (15 multi-brand)
 -- =========================
 INSERT INTO Product VALUES
-('Pro000000001','Sanrio','Usahana Plush Multi-Color','2023-01-01'),
-('Pro000000002','Sanrio','Usahana Giga Plush','2023-02-01'),
-('Pro000000003','Sanrio','Usahana Sitting Doll','2023-03-01'),
-('Pro000000004','Sanrio','Hello Kitty Friends Usahana','2023-04-01'),
-('Pro000000005','Sanrio','Bloom Usahana Plush','2023-05-01'),
+('Pro000000001','Sanrio','Sanrio Usahana Plush Multi-Color','2023-01-01',
+'Medium size Usahana plush in pastel multi-color design. Soft and lightweight, ideal for display or gifting.'),
 
-('Pro000000006','Pop Mart','Labubu Classic Figure','2023-06-01'),
-('Pro000000007','Pop Mart','Skullpanda Winter Series','2023-07-01'),
-('Pro000000008','Pop Mart','Dimoo Space Travel Series','2023-08-01'),
-('Pro000000009','Pop Mart','Molly Sweet Heart Figure','2023-09-01'),
-('Pro000000010','Pop Mart','Crybaby Sad Club Figure','2023-10-01');
+('Pro000000002','Build-A-Bear x Sanrio','Sanrio Usahana Plush (Build-A-Bear)','2023-02-01',
+'Official Usahana plush from Build-A-Bear Workshop featuring soft yellow fur and colorful pastel ears. Customizable with outfits and accessories.'),
 
+('Pro000000003','Sanrio','Sanrio Sugarbunnies Kurousa Fluffy Heart Plush','2023-03-01',
+'Sanrio Sugarbunnies Kurousa plush from the Heisei Characters Fluffy Heart Series. Features soft brown fur, fluffy heart detail, and pastel hat.'),
+
+('Pro000000004','Sanrio','Sanrio Pochacco Dress-Up Plush Doll','2023-04-01',
+'Sanrio Pochacco dress-up plush featuring two interchangeable outfits and posable ears and arms. Soft fluffy material with a cute collectible design.'),
+
+('Pro000000005','Pop Mart','THE MONSTERS x Hello Kitty Vinyl Plush Doll','2023-05-01',
+'Labubu x Hello Kitty vinyl plush doll from Pop Mart featuring a hybrid design with vinyl face and soft plush body. A collectible art toy collaboration.'),
+
+('Pro000000006','Monchhichi','Monchhichi Sweet Sugar Large Plush','2023-06-01',
+'Large Monchhichi plush from the Sweet Sugar collection featuring soft pastel colors and fluffy texture. Perfect for hugging and collectors.'),
+
+('Pro000000007','Monchhichi','Monchhichi Kindergarten Style Plush','2023-07-01',
+'Monchhichi plush in kindergarten school uniform with yellow hat and shoulder bag. Discontinued collectible item from Japan.'),
+
+('Pro000000008','Fuggler','Fuggler Gremlins Gizmo Plush','2023-08-01',
+'Fuggler x Gremlins Gizmo plush featuring the signature creepy-cute design with human-like teeth. A unique collectible collaboration item.'),
+
+('Pro000000009','Disney','ShellieMay Springtime Voyage Plush','2023-09-01',
+'ShellieMay plush from Duffy and Friends Springtime Voyage 2026 collection featuring a pastel spring outfit. Soft and collectible Disneyland exclusive item.'),
+
+('Pro000000010','Disney','CookieAnn Plush Hand Puppet','2023-10-01',
+'CookieAnn plush hand puppet from Duffy and Friends. Soft plush design with interactive puppet feature, perfect for play and collection.'),
+
+('Pro000000011','Disney','Minnie x ShellieMay Plush','2023-11-01',
+'HKDL 2026 ShellieMay plush dressed in Minnie Mouse style from Duffy and Friends 2026 collection. A soft and collectible Hong Kong Disneyland exclusive.'),
+
+('Pro000000012','Jellycat','Jellycat Peanut Penguin Plush','2023-12-01',
+'Jellycat Peanut Penguin plush toy featuring super soft fabric and a cute rounded design. A popular collectible soft toy from the UK.'),
+
+('Pro000000013','Jellycat','Jellycat Bashful Bunny Snow Suit','2024-01-01',
+'Jellycat Bashful Bunny plush dressed in a cozy snow suit. Features ultra-soft fabric and a winter-themed design, perfect for gifting and collecting.'),
+
+('Pro000000014','Disney','Buzz Lightyear Plush (Takara Tomy)','2024-02-01',
+'Buzz Lightyear plush doll from Toy Story by Takara Tomy. Soft, washable material and compact size, perfect for kids and collectors.'),
+
+('Pro000000015','Sanei Boeki','Crayon Shin-chan School Uniform Plush','2024-03-01',
+'Crayon Shin-chan plush in school uniform from the Transformation series by Sanei Boeki. Soft and collectible Japanese plush toy.');
 
 -- =========================
 -- Stock (match Product 15)
 -- =========================
 INSERT INTO Stock VALUES
-('Stk000000001','M',950,10,'Pro000000001'),
-('Stk000000002','L',1050,5,'Pro000000002'),
-('Stk000000003','M',1090,8,'Pro000000003'),
-('Stk000000004','L',1200,6,'Pro000000004'),
-('Stk000000005','S',1300,4,'Pro000000005'),
-('Stk000000006','M',500,20,'Pro000000006'),
-('Stk000000007','M',520,18,'Pro000000007'),
-('Stk000000008','M',550,15,'Pro000000008'),
-('Stk000000009','M',600,12,'Pro000000009'),
-('Stk000000010','M',650,10,'Pro000000010');
+('Stk000000001','9-10 inch (M)',950,18,'Pro000000001'),
+('Stk000000002','16 inch (L)',1350,4,'Pro000000002'),
+('Stk000000003','8.5 inch (M)',1350,10,'Pro000000003'),
+('Stk000000004','8.5 inch (M)',1000,12,'Pro000000004'),
+('Stk000000005','15 inch (L)',3190,14,'Pro000000005'),
 
+('Stk000000006','15 inch (L)',3900,1,'Pro000000006'),
+('Stk000000007','9 inch (M)',1550,2,'Pro000000007'),
+('Stk000000008','9 inch (M)',990,6,'Pro000000008'),
+('Stk000000009','6 inch (S)',2000,12,'Pro000000009'),
+('Stk000000010','9.4 inch (M)',2100,2,'Pro000000010'),
+
+('Stk000000011','10-12 inch (M)',1350,10,'Pro000000011'),
+('Stk000000012','9 inch (M)',1400,21,'Pro000000012'),
+('Stk000000013','9 inch (M)',2500,8,'Pro000000013'),
+('Stk000000014','6.3 inch (S)',1800,14,'Pro000000014'),
+('Stk000000015','9 inch (M)',500,15,'Pro000000015');
 
 -- =========================
 -- Image (match Stock)
@@ -146,7 +184,12 @@ INSERT INTO Image VALUES
 ('Img000000007',1,'Stk000000007'),
 ('Img000000008',1,'Stk000000008'),
 ('Img000000009',1,'Stk000000009'),
-('Img000000010',1,'Stk000000010');
+('Img000000010',1,'Stk000000010'),
+('Img000000011',1,'Stk000000011'),
+('Img000000012',1,'Stk000000012'),
+('Img000000013',1,'Stk000000013'),
+('Img000000014',1,'Stk000000014'),
+('Img000000015',1,'Stk000000015');
 
 
 INSERT INTO Admin VALUES
