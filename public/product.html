@@ -680,7 +680,6 @@
 
     // product list
     let products = [];
-
     let currentMode = 'list';
     let editIndex = null;
     let currentImage = '';
@@ -692,20 +691,26 @@
       textarea.style.height = Math.max(textarea.scrollHeight, baseHeight) + 'px';
     }
 
+    async function loadProducts() {
+      try {
+        const res = await fetch('http://localhost:3000/admin/products');
+        const data = await res.json();
+        products = data;
+        renderProducts();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to load products');
+      }
+    }
+
     // List ↔ Form
     function showView(mode) {
       currentMode = mode;
+
       if (mode === 'list') {
         viewList.classList.remove('hidden');
         viewForm.classList.add('hidden');
         pageTitle.textContent = 'Admin Page';
-
-        async function loadProducts() {
-          const res = await fetch('http://localhost:3000/admin/products');
-          const data = await res.json();
-          products = data;
-          renderProducts();
-        }
         renderProducts();
         return;
       }
@@ -796,8 +801,7 @@
 
     // สร้าง ID อัตโนมัติ
     function generateId() {
-      const next = products.length + 1;
-      return 'MC' + String(next).padStart(3, '0');
+      return 'Pro' + String(Date.now()).slice(-9);
     }
 
     // ค่าจาก input → สร้าง object
@@ -842,37 +846,49 @@
       const data = getFormData();
       if (!validateForm(data)) return;
 
-      if (currentMode === 'add') {
-        await fetch('http://localhost:3000/admin/products', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: data.id,
-            name: data.name,
-            brand: data.brand,
-            price: data.price,
-            quantity: data.quantity,
-            releaseDate: '2024-01-01',
-            stockId: 'STK' + Date.now(),
-            size: 'M'
-          })
-        });
+      try {
+        let res;
 
-      } else if (currentMode === 'edit') {
-        await fetch(`http://localhost:3000/admin/products/${data.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: data.name,
-            brand: data.brand,
-            price: data.price,
-            quantity: data.quantity
-          })
-        });
+        if (currentMode === 'add') {
+          res = await fetch('http://localhost:3000/admin/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: data.id,
+              name: data.name,
+              brand: data.brand,
+              price: data.price,
+              quantity: data.quantity,
+              releaseDate: '2024-01-01',
+              stockId: 'Stk' + String(Date.now()).slice(-9),
+              size: 'M'
+            })
+          });
+        } else if (currentMode === 'edit') {
+          res = await fetch(`http://localhost:3000/admin/products/${data.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: data.name,
+              brand: data.brand,
+              price: data.price,
+              quantity: data.quantity
+            })
+          });
+        }
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          throw new Error(result.error || 'Operation failed');
+        }
+
+        await loadProducts();
+        showView('list');
+      } catch (err) {
+        console.error(err);
+        alert(err.message);
       }
-
-      await loadProducts();
-      showView('list');
     });
 
     deleteBtn.addEventListener('click', () => {
@@ -886,15 +902,26 @@
     });
 
     confirmDelete.addEventListener('click', async () => {
-      const id = products[editIndex].id;
+      try {
+        const id = products[editIndex].id;
 
-      await fetch(`http://localhost:3000/admin/products/${id}`, {
-        method: 'DELETE'
-      });
+        const res = await fetch(`http://localhost:3000/admin/products/${id}`, {
+          method: 'DELETE'
+        });
 
-      deleteModal.classList.add('hidden');
-      await loadProducts();
-      showView('list');
+        const result = await res.json();
+
+        if (!res.ok) {
+          throw new Error(result.error || 'Delete failed');
+        }
+
+        deleteModal.classList.add('hidden');
+        await loadProducts();
+        showView('list');
+      } catch (err) {
+        console.error(err);
+        alert(err.message);
+      }
     });
 
     deleteModal.addEventListener('click', (e) => {

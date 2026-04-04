@@ -36,11 +36,6 @@ router.post('/login', (req, res) => {
   res.send(`Login successful for user: ${username}`);
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
-
 //database search product
 router.get('/search', (req, res) => {
   let name = req.query.name || '';
@@ -170,12 +165,40 @@ router.put('/admin/products/:id', (req, res) => {
 router.delete('/admin/products/:id', (req, res) => {
   const productId = req.params.id;
 
-  db.query(`DELETE FROM Stock WHERE Product_ID = ?`, [productId], (err) => {
+  const findStockSql = `SELECT Stock_ID FROM Stock WHERE Product_ID = ?`;
+
+  db.query(findStockSql, [productId], (err, stocks) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    db.query(`DELETE FROM Product WHERE Product_ID = ?`, [productId], (err2) => {
-      if (err2) return res.status(500).json({ error: err2.message });
-      res.json({ message: 'Product deleted successfully' });
-    });
+    const deleteStockAndProduct = () => {
+      db.query(`DELETE FROM Stock WHERE Product_ID = ?`, [productId], (err2) => {
+        if (err2) return res.status(500).json({ error: err2.message });
+
+        db.query(`DELETE FROM Product WHERE Product_ID = ?`, [productId], (err3) => {
+          if (err3) return res.status(500).json({ error: err3.message });
+          res.json({ message: 'Product deleted successfully' });
+        });
+      });
+    };
+
+    if (!stocks || stocks.length === 0) {
+      return deleteStockAndProduct();
+    }
+
+    const stockIds = stocks.map(s => s.Stock_ID);
+    const placeholders = stockIds.map(() => '?').join(',');
+
+    db.query(
+      `DELETE FROM Image WHERE Stock_ID IN (${placeholders})`,
+      stockIds,
+      (err4) => {
+        if (err4) return res.status(500).json({ error: err4.message });
+        deleteStockAndProduct();
+      }
+    );
   });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

@@ -5,3 +5,4 @@
 5. npm install mysql2
 6. node script.js 
 7. open http://localhost:3000/search.html
+   or http://localhost:3000/product.html
