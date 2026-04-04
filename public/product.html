@@ -679,44 +679,7 @@
     };
 
     // product list
-    let products = [
-      {
-        id: 'MC001',
-        name: 'Monchhichi Plush Bebichhichi',
-        price: 495.00,
-        quantity: 130,
-        brand: 'Monchhichi',
-        description: 'A cute and collectible Bebichhichi plush doll from the Monchhichi series. Made with soft, high-quality materials, featuring the iconic thumb-sucking pose and adorable outfit. Perfect for kids, collectors, or as a gift.',
-        image: 'MC001.jpg'
-      },
-      {
-        id: 'MC002',
-        name: 'Hello Kitty X Monchhichi Part 2',
-        price: 650.00,
-        quantity: 146,
-        brand: 'Monchhichi',
-        description: 'Monchhichi Sweet Sugar plush doll featuring soft pastel colors and a cute sweet-themed outfit. Made with high-quality materials and the iconic thumb-sucking pose, perfect for collectors and gift giving.',
-        image: 'MC002.jpg'
-      },
-      {
-        id: 'MC003',
-        name: 'Monchhichi Sweet Sugar Plush Doll',
-        price: '90.00',
-        quantity: '92',
-        brand: 'Monchhichi',
-        description: 'Classic Monchhichi Sweeet Brown plush doll featuring soft brown fur and the iconic thumb-sucking pose. A timeless collectible toy from Japan, perfect for kids and collectors.',
-        image: 'MC003.jpg'
-      },
-      {
-        id: 'MC004',
-        name: 'Usahana x Rody Collaboration Plush',
-        price: 750.00,
-        quantity: 16,
-        brand: 'Sanrio x Rody',
-        description: 'Adorable collaboration plush featuring Usahana with the iconic Rody horse design in soft pastel colors. Perfect for collectors and fans of cute Japanese characters.',
-        image: 'MC004.jpg'
-      }
-    ];
+    let products = [];
 
     let currentMode = 'list';
     let editIndex = null;
@@ -736,6 +699,13 @@
         viewList.classList.remove('hidden');
         viewForm.classList.add('hidden');
         pageTitle.textContent = 'Admin Page';
+
+        async function loadProducts() {
+          const res = await fetch('http://localhost:3000/admin/products');
+          const data = await res.json();
+          products = data;
+          renderProducts();
+        }
         renderProducts();
         return;
       }
@@ -868,16 +838,40 @@
     textarea.addEventListener('input', autoResizeTextarea);
     window.addEventListener('resize', autoResizeTextarea);
 
-    submitBtn.addEventListener('click', () => { // เพิ่มสินค้า mode = add
+    submitBtn.addEventListener('click', async () => {
       const data = getFormData();
       if (!validateForm(data)) return;
 
       if (currentMode === 'add') {
-        products.push(data);
-      } else if (currentMode === 'edit' && editIndex !== null) {
-        products[editIndex] = data; // แก้ไขสินค้า
+        await fetch('http://localhost:3000/admin/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: data.id,
+            name: data.name,
+            brand: data.brand,
+            price: data.price,
+            quantity: data.quantity,
+            releaseDate: '2024-01-01',
+            stockId: 'STK' + Date.now(),
+            size: 'M'
+          })
+        });
+
+      } else if (currentMode === 'edit') {
+        await fetch(`http://localhost:3000/admin/products/${data.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: data.name,
+            brand: data.brand,
+            price: data.price,
+            quantity: data.quantity
+          })
+        });
       }
 
+      await loadProducts();
       showView('list');
     });
 
@@ -891,11 +885,15 @@
       pageTitle.textContent = 'Admin Edit';
     });
 
-    confirmDelete.addEventListener('click', () => {
-      if (editIndex !== null) {
-        products.splice(editIndex, 1); // ลบสินค้าออกจาก array
-      }
+    confirmDelete.addEventListener('click', async () => {
+      const id = products[editIndex].id;
+
+      await fetch(`http://localhost:3000/admin/products/${id}`, {
+        method: 'DELETE'
+      });
+
       deleteModal.classList.add('hidden');
+      await loadProducts();
       showView('list');
     });
 
@@ -922,7 +920,7 @@
     document.getElementById('btnLogout1').addEventListener('click', () => alert('Logout'));
     document.getElementById('btnLogout2').addEventListener('click', () => alert('Logout'));
 
-    renderProducts();
+    loadProducts();
     autoResizeTextarea();
   </script>
 </body>

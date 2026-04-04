@@ -1,89 +1,86 @@
-  const express = require('express');
-  const port = 3000;
-  const path = require('path');
-  const app = express();
-  const router = express.Router();
-  const mysql = require('mysql2');
+const express = require('express');
+const port = 3000;
+const path = require('path');
+const app = express();
+const router = express.Router();
+const mysql = require('mysql2');
 
-  const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'Bellebear',
-    password: 'BBB888', 
-    database: 'Belle_Bear'
-  });
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'Bellebear',
+  password: 'BBB888',
+  database: 'Belle_Bear'
+});
 
-  db.connect((err) => {
-    if (err) {
-      console.error('DB connect error:', err);
-    } else {
-      console.log('Connected to MySQL');
-    }
-  });
+db.connect((err) => {
+  if (err) {
+    console.error('DB connect error:', err);
+  } else {
+    console.log('Connected to MySQL');
+  }
+});
 
-  router.use(express.json());
-  app.use(express.static('public'));
-  router.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use(router);
 
-
-  app.use(router);
-
-  router.get('/login', (req, res) => {
-    res.redirect('/login.html');
-  });
+router.get('/login', (req, res) => {
+  res.redirect('/login.html');
+});
 
 
-  router.post('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-    const { username, password } = req.body;
-    console.log(`Received login attempt with username: ${username} and password: ${password}`);
-    res.send(`Login successful for user: ${username}`);
-  });
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  console.log(`Received login attempt with username: ${username} and password: ${password}`);
+  res.send(`Login successful for user: ${username}`);
+});
 
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 
-  //database search product
-  router.get('/search', (req, res) => {
-    let name = req.query.name || '';
-    let brand = req.query.brand || '';
-    let min = req.query.min || 0;
-    let max = req.query.max || 999999;
+//database search product
+router.get('/search', (req, res) => {
+  let name = req.query.name || '';
+  let brand = req.query.brand || '';
+  let min = req.query.min || 0;
+  let max = req.query.max || 999999;
 
-    let sql = `
+  let sql = `
       SELECT Product.Name, Product.Brand, Stock.Price
       FROM Product
       JOIN Stock ON Product.Product_ID = Stock.Product_ID
       WHERE 1=1
     `;
 
-    let params = [];
+  let params = [];
 
-    // 🔥 name filter
-    if (name !== '') {
-      sql += ` AND LOWER(Product.Name) LIKE ?`;
-      params.push(`%${name.toLowerCase()}%`);
-    }
+  // 🔥 name filter
+  if (name !== '') {
+    sql += ` AND LOWER(Product.Name) LIKE ?`;
+    params.push(`%${name.toLowerCase()}%`);
+  }
 
-    // 🔥 brand filter
-    if (brand !== '') {
-      sql += ` AND Product.Brand = ?`;
-      params.push(brand);
-    }
+  // 🔥 brand filter
+  if (brand !== '') {
+    sql += ` AND Product.Brand = ?`;
+    params.push(brand);
+  }
 
-    // 🔥 price filter
-    sql += ` AND Stock.Price BETWEEN ? AND ?`;
-    params.push(min, max);
+  // 🔥 price filter
+  sql += ` AND Stock.Price BETWEEN ? AND ?`;
+  params.push(min, max);
 
-    db.query(sql, params, (err, result) => {
-      if (err) res.send(err);
-      else res.json(result);
-    });
+  db.query(sql, params, (err, result) => {
+    if (err) res.send(err);
+    else res.json(result);
   });
+});
 
 
-  // ===== GET BRANDS =====
+// ===== GET BRANDS =====
 router.get('/brands', (req, res) => {
   const sql = `SELECT DISTINCT Brand FROM Product`;
 
@@ -93,5 +90,92 @@ router.get('/brands', (req, res) => {
     } else {
       res.json(result);
     }
+  });
+});
+
+
+// ===== ADMIN =====
+// get all product
+router.get('/admin/products', (req, res) => {
+  const sql = `
+    SELECT 
+      Product.Product_ID AS id,
+      Product.Name AS name,
+      Product.Brand AS brand,
+      Stock.Price AS price,
+      Stock.Quantity AS quantity
+    FROM Product
+    JOIN Stock ON Product.Product_ID = Stock.Product_ID
+    ORDER BY Product.Product_ID
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(result);
+  });
+});
+
+// add product
+router.post('/admin/products', (req, res) => {
+  const { id, name, brand, price, quantity, releaseDate, stockId, size } = req.body;
+
+  const sqlProduct = `
+    INSERT INTO Product (Product_ID, Brand, Name, Release_Date)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  const sqlStock = `
+    INSERT INTO Stock (Stock_ID, Size, Price, Quantity, Product_ID)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(sqlProduct, [id, brand, name, releaseDate], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    db.query(sqlStock, [stockId, size || 'M', price, quantity, id], (err2) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+      res.json({ message: 'Product added successfully' });
+    });
+  });
+});
+
+// update product
+router.put('/admin/products/:id', (req, res) => {
+  const productId = req.params.id;
+  const { name, brand, price, quantity } = req.body;
+
+  const sqlProduct = `
+    UPDATE Product
+    SET Name = ?, Brand = ?
+    WHERE Product_ID = ?
+  `;
+
+  const sqlStock = `
+    UPDATE Stock
+    SET Price = ?, Quantity = ?
+    WHERE Product_ID = ?
+  `;
+
+  db.query(sqlProduct, [name, brand, productId], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    db.query(sqlStock, [price, quantity, productId], (err2) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+      res.json({ message: 'Product updated successfully' });
+    });
+  });
+});
+
+// delete product
+router.delete('/admin/products/:id', (req, res) => {
+  const productId = req.params.id;
+
+  db.query(`DELETE FROM Stock WHERE Product_ID = ?`, [productId], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    db.query(`DELETE FROM Product WHERE Product_ID = ?`, [productId], (err2) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+      res.json({ message: 'Product deleted successfully' });
+    });
   });
 });
