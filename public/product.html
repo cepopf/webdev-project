@@ -38,6 +38,55 @@
       display: none;
     }
 
+    .navbar {
+      width: 100%;
+      background: var(--panel);
+      border-radius: 24px;
+      padding: 18px 28px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .navbar-logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .navbar-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #564f4f;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-menu a {
+      text-decoration: none;
+      color: #564f4f;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 12px;
+    }
+
+    .navbar-menu a:hover {
+      background: #edf4f8;
+    }
+
     .browser,
     .page {
       background: transparent;
@@ -79,7 +128,7 @@
     .btn {
       border: 2px solid var(--line);
       background: #edf4f8;
-      color: #564f4f;
+      color: #262626;
       border-radius: 24px;
       padding: 9px 18px;
       font-size: 18px;
@@ -127,15 +176,16 @@
 
     .btn.add {
       background: var(--card);
-      min-width: 360px;
-      min-height: 94px;
-      font-size: 24px;
+      min-width: unset;
+      min-height: 60px;
+      font-size: 18px;
       justify-content: flex-start;
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 14px 18px;
+      padding: 10px 16px;
       text-align: left;
+      width: fit-content;
+      border-radius: 18px;
     }
 
     .brand-badge {
@@ -414,8 +464,16 @@
       }
 
       .btn.add {
-        min-width: 100%;
-        width: 100%
+        min-width: unset;
+        width: fit-content;
+        min-height: 50px;
+        font-size: 16px;
+        padding: 10px 14px;
+      }
+
+      .brand-badge {
+        width: 42px;
+        height: 42px;
       }
     }
 
@@ -472,6 +530,14 @@
 
 <body>
   <div class="app">
+
+    <div class="navbar">
+      <div class="navbar-left">
+        <img src="logo.jpg" class="navbar-logo" alt="Logo">
+        <div class="navbar-title">Belle Bear Admin</div>
+      </div>
+    </div>
+
     <div class="window-title" id="pageTitle">Admin Page</div>
 
     <div class="browser">
@@ -504,11 +570,7 @@
             </div>
             <div class="rows" id="productRows"></div>
             <button class="btn add" id="goAdd">
-              <span class="brand-badge">
-                <img src="logo.jpg" class="add-icon">
-              </span>
-              <span>Add new product</span>
-            </button>
+              Add new product</button>
           </div>
         </section>
 
