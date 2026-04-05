@@ -251,6 +251,62 @@
       display: block;
     }
 
+
+    .gallery-box {
+      width: 100%;
+    }
+
+    .gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px;
+      height: 42px;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 1;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .gallery-arrow-left {
+      left: 14px;
+    }
+
+    .gallery-arrow-right {
+      right: 14px;
+    }
+
+    .image-box.has-image .gallery-arrow {
+      display: flex;
+    }
+
+    .thumbs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .thumb {
+      width: 72px;
+      height: 72px;
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      object-fit: cover;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .thumb.active {
+      outline: 3px solid #9cc9e4;
+    }
+
     .logout-icon {
       width: 18px;
       height: 18px;
@@ -604,13 +660,29 @@
               <div class="layout">
                 <!-- produt image -->
                 <div>
-                  <label class="image-box" for="imageUpload" id="imageLabel">
-                    <div class="placeholder">
-                      <img src="addphoto.png" alt="placeholder icon">
+                  <div class="gallery-box">
+                    <div class="image-box" id="imageLabel">
+                      <button type="button" class="gallery-arrow gallery-arrow-left" id="prevImageBtn"
+                        aria-label="Previous Image">‹</button>
+
+                      <div class="placeholder" id="imagePlaceholder">
+                        <img src="addphoto.png" alt="placeholder icon">
+                      </div>
+
+                      <img id="previewImage" alt="Preview image" />
+
+                      <button type="button" class="gallery-arrow gallery-arrow-right" id="nextImageBtn"
+                        aria-label="Next Image">›</button>
                     </div>
-                    <img id="previewImage" alt="Preview image" />
-                  </label>
-                  <input class="upload-input" id="imageUpload" type="file" accept="image/*" />
+
+                    <div class="thumbs" id="thumbContainer"></div>
+
+                    <label class="btn small" for="imageUpload"
+                      style="margin-top:12px; display:inline-flex; align-items:center;">
+                      Upload Images
+                    </label>
+                    <input class="upload-input" id="imageUpload" type="file" accept="image/*" multiple />
+                  </div>
 
                   <div class="action-row">
                     <button class="btn danger" id="deleteBtn">Delete</button>
@@ -669,6 +741,10 @@
     const previewImage = document.getElementById('previewImage');
     const imageLabel = document.getElementById('imageLabel');
     const textarea = document.getElementById('productDesc');
+    const prevImageBtn = document.getElementById('prevImageBtn');
+    const nextImageBtn = document.getElementById('nextImageBtn');
+    const thumbContainer = document.getElementById('thumbContainer');
+    const imagePlaceholder = document.getElementById('imagePlaceholder');
 
     const formEls = {
       name: document.getElementById('productName'),
@@ -682,7 +758,8 @@
     let products = [];
     let currentMode = 'list';
     let editIndex = null;
-    let currentImage = '';
+    let currentImages = [];
+    let currentImageIndex = 0;
 
     // Auto resize textarea
     function autoResizeTextarea() {
@@ -701,6 +778,45 @@
         console.error(err);
         alert('Failed to load products');
       }
+    }
+
+    function updateMainPreview() {
+      if (currentImages.length > 0) {
+        previewImage.src = currentImages[currentImageIndex];
+        previewImage.style.display = 'block';
+        imageLabel.classList.add('has-image');
+        imagePlaceholder.style.display = 'none';
+      } else {
+        previewImage.src = '';
+        previewImage.style.display = 'none';
+        imageLabel.classList.remove('has-image');
+        imagePlaceholder.style.display = 'flex';
+      }
+    }
+
+    function renderThumbnails() {
+      thumbContainer.innerHTML = '';
+
+      currentImages.forEach((img, index) => {
+        const thumb = document.createElement('img');
+        thumb.src = img;
+        thumb.className = 'thumb' + (index === currentImageIndex ? ' active' : '');
+        thumb.alt = `Preview ${index + 1}`;
+        thumb.addEventListener('click', () => {
+          currentImageIndex = index;
+          updateMainPreview();
+          renderThumbnails();
+        });
+        thumbContainer.appendChild(thumb);
+      });
+    }
+
+    function refreshGallery() {
+      if (currentImageIndex >= currentImages.length) {
+        currentImageIndex = 0;
+      }
+      updateMainPreview();
+      renderThumbnails();
     }
 
     // List ↔ Form
@@ -757,13 +873,16 @@
       });
     }
 
+
+
+
     function resetForm() {
       formEls.name.value = '';
       formEls.price.value = '';
       formEls.qty.value = '';
       formEls.brand.value = '';
       formEls.desc.value = '';
-      currentImage = '';
+      currentImages = [];
       previewImage.src = '';
       imageLabel.classList.remove('has-image');
       imageUpload.value = '';
@@ -776,14 +895,17 @@
       formEls.qty.value = product.quantity ?? '';
       formEls.brand.value = product.brand || '';
       formEls.desc.value = product.description || '';
-      currentImage = product.image || '';
-      if (currentImage) {
-        previewImage.src = currentImage;
+
+      currentImages = product.images || [];
+
+      if (currentImages.length > 0) {
+        previewImage.src = currentImages[0];
         imageLabel.classList.add('has-image');
       } else {
         previewImage.src = '';
         imageLabel.classList.remove('has-image');
       }
+
       autoResizeTextarea();
     }
 
@@ -813,7 +935,7 @@
         quantity: parseInt(formEls.qty.value || '0', 10),
         brand: formEls.brand.value.trim(),
         description: formEls.desc.value.trim(),
-        image: currentImage
+        images: currentImages
       };
     }
 
@@ -838,6 +960,17 @@
     backToList.addEventListener('click', () => showView('list'));
     cancelBtn.addEventListener('click', () => showView('list'));
     searchInput.addEventListener('input', renderProducts);
+    prevImageBtn.addEventListener('click', () => {
+      if (!currentImages.length) return;
+      currentImageIndex = currentImageIndex === 0 ? currentImages.length - 1 : currentImageIndex - 1;
+      refreshGallery();
+    });
+
+    nextImageBtn.addEventListener('click', () => {
+      if (!currentImages.length) return;
+      currentImageIndex = currentImageIndex === currentImages.length - 1 ? 0 : currentImageIndex + 1;
+      refreshGallery();
+    });
 
     textarea.addEventListener('input', autoResizeTextarea);
     window.addEventListener('resize', autoResizeTextarea);
@@ -857,6 +990,8 @@
               id: data.id,
               name: data.name,
               brand: data.brand,
+              description: data.description,
+              images: data.images,
               price: data.price,
               quantity: data.quantity,
               releaseDate: '2024-01-01',
@@ -871,6 +1006,8 @@
             body: JSON.stringify({
               name: data.name,
               brand: data.brand,
+              description: data.description,
+              images: data.images,
               price: data.price,
               quantity: data.quantity
             })
@@ -932,15 +1069,27 @@
     });
 
     imageUpload.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader(); // อัปโหลดรูป
-      reader.onload = () => {
-        currentImage = reader.result;
-        previewImage.src = currentImage;
-        imageLabel.classList.add('has-image');
-      };
-      reader.readAsDataURL(file);
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      currentImages = [];
+      let loadedCount = 0;
+
+      files.forEach((file, index) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          currentImages[index] = reader.result;
+          loadedCount++;
+
+          if (loadedCount === files.length) {
+            previewImage.src = currentImages[0];
+            imageLabel.classList.add('has-image');
+          }
+        };
+
+        reader.readAsDataURL(file);
+      });
     });
 
     document.getElementById('btnLog').addEventListener('click', () => alert('Log button example'));

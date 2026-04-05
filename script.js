@@ -44,11 +44,21 @@ router.get('/search', (req, res) => {
   let max = req.query.max || 999999;
 
   let sql = `
-      SELECT Product.Name, Product.Brand, Stock.Price
-      FROM Product
-      JOIN Stock ON Product.Product_ID = Stock.Product_ID
-      WHERE 1=1
-    `;
+    SELECT 
+      Product.Name,
+      Product.Brand,
+      Stock.Price,
+      (
+        SELECT Image.Image_Data
+        FROM Image
+        WHERE Image.Stock_ID = Stock.Stock_ID
+        ORDER BY Image.Image_num
+        LIMIT 1
+      ) AS image
+    FROM Product
+    JOIN Stock ON Product.Product_ID = Stock.Product_ID
+    WHERE 1=1
+  `;
 
   let params = [];
 
@@ -97,6 +107,8 @@ router.get('/admin/products', (req, res) => {
       Product.Product_ID AS id,
       Product.Name AS name,
       Product.Brand AS brand,
+      Product.Description AS description,
+      Stock.Stock_ID AS stockId,
       Stock.Price AS price,
       Stock.Quantity AS quantity
     FROM Product
@@ -104,19 +116,54 @@ router.get('/admin/products', (req, res) => {
     ORDER BY Product.Product_ID
   `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, (err, products) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.json(result);
+
+    if (products.length === 0) {
+      return res.json([]);
+    }
+
+    const stockIds = products.map(p => p.stockId);
+    const placeholders = stockIds.map(() => '?').join(',');
+
+    const imageSql = `
+      SELECT Stock_ID AS stockId, Image_num AS imageNum, Image_Data AS image
+      FROM Image
+      WHERE Stock_ID IN (${placeholders})
+      ORDER BY Image_num
+    `;
+
+    db.query(imageSql, stockIds, (err2, images) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+
+      const imageMap = {};
+      images.forEach(img => {
+        if (!imageMap[img.stockId]) imageMap[img.stockId] = [];
+        imageMap[img.stockId].push(img.image);
+      });
+
+      const result = products.map(product => ({
+        id: product.id,
+        name: product.name,
+        brand: product.brand,
+        description: product.description,
+        price: product.price,
+        quantity: product.quantity,
+        images: imageMap[product.stockId] || []
+      }));
+
+      res.json(result);
+    });
   });
 });
 
 // add product
 router.post('/admin/products', (req, res) => {
-  const { id, name, brand, price, quantity, releaseDate, stockId, size } = req.body;
+  const { id, name, brand, description, images, price, quantity, releaseDate, stockId, size } = req.body;
 
   const sqlProduct = `
-    INSERT INTO Product (Product_ID, Brand, Name, Release_Date)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO Product (Product_ID, Brand, Name, Release_Date, Description)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
   const sqlStock = `
@@ -124,12 +171,30 @@ router.post('/admin/products', (req, res) => {
     VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.query(sqlProduct, [id, brand, name, releaseDate], (err) => {
+  db.query(sqlProduct, [id, brand, name, releaseDate, description], (err) => {
     if (err) return res.status(500).json({ error: err.message });
 
     db.query(sqlStock, [stockId, size || 'M', price, quantity, id], (err2) => {
       if (err2) return res.status(500).json({ error: err2.message });
-      res.json({ message: 'Product added successfully' });
+
+      if (!images || images.length === 0) {
+        return res.json({ message: 'Product added successfully' });
+      }
+
+      const imageValues = images.map((img, index) => {
+        const imageId = 'Img' + String(Date.now() + index).slice(-9);
+        return [imageId, index + 1, stockId, img];
+      });
+
+      const sqlImage = `
+        INSERT INTO Image (Image_ID, Image_num, Stock_ID, Image_Data)
+        VALUES ?
+      `;
+
+      db.query(sqlImage, [imageValues], (err3) => {
+        if (err3) return res.status(500).json({ error: err3.message });
+        res.json({ message: 'Product added successfully' });
+      });
     });
   });
 });
@@ -137,11 +202,11 @@ router.post('/admin/products', (req, res) => {
 // update product
 router.put('/admin/products/:id', (req, res) => {
   const productId = req.params.id;
-  const { name, brand, price, quantity } = req.body;
+  const { name, brand, description, images, price, quantity } = req.body;
 
   const sqlProduct = `
     UPDATE Product
-    SET Name = ?, Brand = ?
+    SET Name = ?, Brand = ?, Description = ?
     WHERE Product_ID = ?
   `;
 
@@ -151,12 +216,43 @@ router.put('/admin/products/:id', (req, res) => {
     WHERE Product_ID = ?
   `;
 
-  db.query(sqlProduct, [name, brand, productId], (err) => {
+  const findStockSql = `SELECT Stock_ID FROM Stock WHERE Product_ID = ?`;
+
+  db.query(sqlProduct, [name, brand, description, productId], (err) => {
     if (err) return res.status(500).json({ error: err.message });
 
     db.query(sqlStock, [price, quantity, productId], (err2) => {
       if (err2) return res.status(500).json({ error: err2.message });
-      res.json({ message: 'Product updated successfully' });
+
+      db.query(findStockSql, [productId], (err3, stockRows) => {
+        if (err3) return res.status(500).json({ error: err3.message });
+        if (!stockRows.length) return res.status(500).json({ error: 'Stock not found' });
+
+        const stockId = stockRows[0].Stock_ID;
+
+        db.query(`DELETE FROM Image WHERE Stock_ID = ?`, [stockId], (err4) => {
+          if (err4) return res.status(500).json({ error: err4.message });
+
+          if (!images || images.length === 0) {
+            return res.json({ message: 'Product updated successfully' });
+          }
+
+          const imageValues = images.map((img, index) => {
+            const imageId = 'Img' + String(Date.now() + index).slice(-9);
+            return [imageId, index + 1, stockId, img];
+          });
+
+          const sqlImage = `
+            INSERT INTO Image (Image_ID, Image_num, Stock_ID, Image_Data)
+            VALUES ?
+          `;
+
+          db.query(sqlImage, [imageValues], (err5) => {
+            if (err5) return res.status(500).json({ error: err5.message });
+            res.json({ message: 'Product updated successfully' });
+          });
+        });
+      });
     });
   });
 });

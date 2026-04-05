@@ -85,6 +85,7 @@ CREATE TABLE Image (
     Image_ID CHAR(12) PRIMARY KEY,
     Image_num INT NOT NULL CHECK (Image_num >= 1),
     Stock_ID CHAR(12) NOT NULL,
+    Image_Data LONGTEXT,
     FOREIGN KEY (Stock_ID) REFERENCES Stock(Stock_ID)
 );
 
@@ -100,9 +101,7 @@ CREATE TABLE Manage (
     FOREIGN KEY (Product_ID) REFERENCES Product(Product_ID)
 );
 
--- =========================
 -- Product (15 multi-brand)
--- =========================
 INSERT INTO Product VALUES
 ('Pro000000001','Sanrio','Sanrio Usahana Plush Multi-Color','2023-01-01',
 'Medium size Usahana plush in pastel multi-color design. Soft and lightweight, ideal for display or gifting.'),
@@ -149,9 +148,7 @@ INSERT INTO Product VALUES
 ('Pro000000015','Sanei Boeki','Crayon Shin-chan School Uniform Plush','2024-03-01',
 'Crayon Shin-chan plush in school uniform from the Transformation series by Sanei Boeki. Soft and collectible Japanese plush toy.');
 
--- =========================
 -- Stock (match Product 15)
--- =========================
 INSERT INTO Stock VALUES
 ('Stk000000001','9-10 inch (M)',950,18,'Pro000000001'),
 ('Stk000000002','16 inch (L)',1350,4,'Pro000000002'),
@@ -171,26 +168,23 @@ INSERT INTO Stock VALUES
 ('Stk000000014','6.3 inch (S)',1800,14,'Pro000000014'),
 ('Stk000000015','9 inch (M)',500,15,'Pro000000015');
 
--- =========================
 -- Image (match Stock)
--- =========================
 INSERT INTO Image VALUES
-('Img000000001',1,'Stk000000001'),
-('Img000000002',1,'Stk000000002'),
-('Img000000003',1,'Stk000000003'),
-('Img000000004',1,'Stk000000004'),
-('Img000000005',1,'Stk000000005'),
-('Img000000006',1,'Stk000000006'),
-('Img000000007',1,'Stk000000007'),
-('Img000000008',1,'Stk000000008'),
-('Img000000009',1,'Stk000000009'),
-('Img000000010',1,'Stk000000010'),
-('Img000000011',1,'Stk000000011'),
-('Img000000012',1,'Stk000000012'),
-('Img000000013',1,'Stk000000013'),
-('Img000000014',1,'Stk000000014'),
-('Img000000015',1,'Stk000000015');
-
+('Img000000001',1,'Stk000000001', NULL),
+('Img000000002',1,'Stk000000002', NULL),
+('Img000000003',1,'Stk000000003', NULL),
+('Img000000004',1,'Stk000000004', NULL),
+('Img000000005',1,'Stk000000005', NULL),
+('Img000000006',1,'Stk000000006', NULL),
+('Img000000007',1,'Stk000000007', NULL),
+('Img000000008',1,'Stk000000008', NULL),
+('Img000000009',1,'Stk000000009', NULL),
+('Img000000010',1,'Stk000000010', NULL),
+('Img000000011',1,'Stk000000011', NULL),
+('Img000000012',1,'Stk000000012', NULL),
+('Img000000013',1,'Stk000000013', NULL),
+('Img000000014',1,'Stk000000014', NULL),
+('Img000000015',1,'Stk000000015', NULL);
 
 INSERT INTO Admin VALUES
 ('Adm0000001','A','A','BKK',25),
@@ -202,12 +196,14 @@ INSERT INTO Admin VALUES
 ('Adm0000007','A','A','BKK',25),
 ('Adm0000008','A','A','BKK',25),
 ('Adm0000009','A','A','BKK',25),
-('Adm0000010','A','A','BKK',25);
+('Adm0000010','A','A','BKK',25),
+('Adm0000011','A','A','BKK',25),
+('Adm0000012','A','A','BKK',25),
+('Adm0000013','A','A','BKK',25),
+('Adm0000014','A','A','BKK',25),
+('Adm0000015','A','A','BKK',25);
 
-
--- =========================
 -- Manage (Admin ↔ Product)
--- =========================
 INSERT INTO Manage VALUES
 ('Adm0000001','Pro000000001',1,1,0),
 ('Adm0000002','Pro000000002',1,0,0),
@@ -218,4 +214,9 @@ INSERT INTO Manage VALUES
 ('Adm0000007','Pro000000007',1,1,0),
 ('Adm0000008','Pro000000008',1,0,0),
 ('Adm0000009','Pro000000009',1,1,1),
-('Adm0000010','Pro000000010',1,0,0);
+('Adm0000010','Pro000000010',1,0,0),
+('Adm0000011','Pro000000011',1,1,0),
+('Adm0000012','Pro000000012',1,0,1),
+('Adm0000013','Pro000000013',1,1,0),
+('Adm0000014','Pro000000014',1,0,0),
+('Adm0000015','Pro000000015',1,1,1);
