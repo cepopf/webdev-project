@@ -142,8 +142,8 @@ INSERT INTO Product VALUES
 ('Pro000000013','Jellycat','Jellycat Bashful Bunny Snow Suit','2024-01-01',
 'Jellycat Bashful Bunny plush dressed in a cozy snow suit. Features ultra-soft fabric and a winter-themed design, perfect for gifting and collecting.'),
 
-('Pro000000014','Disney','Buzz Lightyear Plush (Takara Tomy)','2024-02-01',
-'Buzz Lightyear plush doll from Toy Story by Takara Tomy. Soft, washable material and compact size, perfect for kids and collectors.'),
+('Pro000000014','Disney','Toy Story Alien Plush','2024-02-01',
+'Official Disney Store Toy Story Alien plush featuring soft velour fabric and embroidered details. Inspired by the Pizza Planet alien character.'),
 
 ('Pro000000015','Sanei Boeki','Crayon Shin-chan School Uniform Plush','2024-03-01',
 'Crayon Shin-chan plush in school uniform from the Transformation series by Sanei Boeki. Soft and collectible Japanese plush toy.');
@@ -165,7 +165,7 @@ INSERT INTO Stock VALUES
 ('Stk000000011','10-12 inch (M)',1350,10,'Pro000000011'),
 ('Stk000000012','9 inch (M)',1400,21,'Pro000000012'),
 ('Stk000000013','9 inch (M)',2500,8,'Pro000000013'),
-('Stk000000014','6.3 inch (S)',1800,14,'Pro000000014'),
+('Stk000000014','8 inch (M)',820,14,'Pro000000014'),
 ('Stk000000015','9 inch (M)',500,15,'Pro000000015');
 
 -- Image (match Stock)
