@@ -804,8 +804,7 @@
         thumb.alt = `Preview ${index + 1}`;
         thumb.addEventListener('click', () => {
           currentImageIndex = index;
-          updateMainPreview();
-          renderThumbnails();
+          refreshGallery();
         });
         thumbContainer.appendChild(thumb);
       });
@@ -880,9 +879,8 @@
       formEls.brand.value = '';
       formEls.desc.value = '';
       currentImages = [];
-      previewImage.src = '';
-      imageLabel.classList.remove('has-image');
-      imageUpload.value = '';
+      currentImageIndex = 0;
+      refreshGallery();
       autoResizeTextarea();
     }
 
@@ -894,14 +892,8 @@
       formEls.desc.value = product.description || '';
 
       currentImages = product.images || [];
-
-      if (currentImages.length > 0) {
-        previewImage.src = currentImages[0];
-        imageLabel.classList.add('has-image');
-      } else {
-        previewImage.src = '';
-        imageLabel.classList.remove('has-image');
-      }
+      currentImageIndex = 0;
+      refreshGallery();
 
       autoResizeTextarea();
     }
@@ -1070,6 +1062,7 @@
       if (!files.length) return;
 
       currentImages = [];
+      currentImageIndex = 0;
       let loadedCount = 0;
 
       files.forEach((file, index) => {
@@ -1080,14 +1073,14 @@
           loadedCount++;
 
           if (loadedCount === files.length) {
-            previewImage.src = currentImages[0];
-            imageLabel.classList.add('has-image');
+            refreshGallery();
           }
         };
 
         reader.readAsDataURL(file);
       });
     });
+
 
     document.getElementById('btnLog').addEventListener('click', () => alert('Log button example'));
     document.getElementById('btnLogout1').addEventListener('click', () => alert('Logout'));
