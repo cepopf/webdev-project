@@ -880,6 +880,7 @@
       formEls.desc.value = '';
       currentImages = [];
       currentImageIndex = 0;
+      imageUpload.value = '';
       refreshGallery();
       autoResizeTextarea();
     }
@@ -934,14 +935,32 @@
         alert('Please enter a product name.');
         return false;
       }
+
+      if (!data.brand) {
+        alert('Please enter a brand.');
+        return false;
+      }
+
       if (Number.isNaN(data.price)) {
         alert('Please enter a valid price.');
         return false;
       }
+
       if (Number.isNaN(data.quantity)) {
         alert('Please enter a valid quantity.');
         return false;
       }
+
+      if (!Array.isArray(data.images) || data.images.length < 1) {
+        alert('Please upload at least 1 image.');
+        return false;
+      }
+
+      if (data.images.length > 3) {
+        alert('You can upload at most 3 images.');
+        return false;
+      }
+
       return true;
     }
 
@@ -1059,7 +1078,14 @@
 
     imageUpload.addEventListener('change', (e) => {
       const files = Array.from(e.target.files);
+
       if (!files.length) return;
+
+      if (files.length > 3) {
+        alert('You can upload at most 3 images.');
+        imageUpload.value = '';
+        return;
+      }
 
       currentImages = [];
       currentImageIndex = 0;

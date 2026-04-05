@@ -162,6 +162,14 @@ router.get('/admin/products', (req, res) => {
 router.post('/admin/products', (req, res) => {
   const { id, name, brand, description, images, price, quantity, releaseDate, stockId, size } = req.body;
 
+  if (!Array.isArray(images) || images.length < 1) {
+    return res.status(400).json({ error: 'Please upload at least 1 image.' });
+  }
+
+  if (images.length > 3) {
+    return res.status(400).json({ error: 'You can upload at most 3 images.' });
+  }
+
   const sqlProduct = `
     INSERT INTO Product (Product_ID, Brand, Name, Release_Date, Description)
     VALUES (?, ?, ?, ?, ?)
@@ -204,6 +212,14 @@ router.post('/admin/products', (req, res) => {
 router.put('/admin/products/:id', (req, res) => {
   const productId = req.params.id;
   const { name, brand, description, images, price, quantity } = req.body;
+
+  if (!Array.isArray(images) || images.length < 1) {
+    return res.status(400).json({ error: 'Please upload at least 1 image.' });
+  }
+
+  if (images.length > 3) {
+    return res.status(400).json({ error: 'You can upload at most 3 images.' });
+  }
 
   const sqlProduct = `
     UPDATE Product
