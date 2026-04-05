@@ -25,18 +25,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(router);
 
-router.get('/login', (req, res) => {
-  res.redirect('/login.html');
-});
 
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   console.log(`Received login attempt with username: ${username} and password: ${password}`);
-  res.send(`Login successful for user: ${username}`);
+  res.redirect('/product');
 });
 
-//database search product
+// router.get('/product', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'public', 'product.html'));
+// });
+
+
 router.get('/search', (req, res) => {
   let name = req.query.name || '';
   let brand = req.query.brand || '';

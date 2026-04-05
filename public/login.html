@@ -58,10 +58,9 @@
                         <legend class="visually-hidden">Login Form</legend>
 
                         <div class="mb-3">
-                            <label for="username" class="form-label fs-4">Username</label>
-                            <input id="username" type="text" name="username"
-                                class="form-control input-custom"
-                                placeholder="Enter your username">
+                            <input id="username" name="username" required placeholder="Enter your username">
+                            <input id="password" name="password" required placeholder="Enter your password">
+                                
                         </div>
                         <div class="mb-4">
                             <label for="password" class="form-label fs-4">Password</label>
@@ -72,8 +71,7 @@
                     </fieldset>
                     <nav class="d-flex flex-column gap-2 align-items-center">
                         <button class="btn btn-custom" type="submit">Login</button>
-                        <button class="btn btn-custom" type="button"
-                            onclick="window.location.href='/'">Back</button>
+                        <button class="btn btn-custom" type="button"onclick="window.location.href='/'">Back</button>
                     </nav>
                 </form>
             </section>
